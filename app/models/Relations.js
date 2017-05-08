@@ -1,6 +1,8 @@
-var User         = require('../../app/models/User').User;
-var Identity     = require('../../app/models/Identity').Identity;
-var Log          = require('../../app/models/Log').Log;
+var User     = require('../../app/models/User').User;
+var Identity = require('../../app/models/Identity').Identity;
+var Log      = require('../../app/models/Log').Log;
+var Book     = require('../../app/models/Book').Book;
+var Page     = require('../../app/models/Page').Page;
 
 /* Identity_User relation */
 User.hasMany(Identity, { as: 'Identities', foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
@@ -13,3 +15,11 @@ Log.belongsTo(Identity, { as: 'Identity', foreignKey: { allowNull: true }, onDel
 /* Log_User relation */
 User.hasMany(Log, { as: 'Logs', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
 Log.belongsTo(User, { as: 'User', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
+
+/* Book_User relation */
+User.hasMany(Book, { as: 'Books', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
+Book.belongsTo(User, { as: 'Owner', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
+
+/* Book_Page relation */
+Book.hasMany(Page, { as: 'Pages', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
+Page.belongsTo(Book, { as: 'Book', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
