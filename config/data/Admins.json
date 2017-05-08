@@ -1,0 +1,8 @@
+[
+	{
+		"type" : "Admin",
+		"email" : "kareem-mokhtar@outlook.com",
+		"password" : "123456",
+		"active": 1
+	}
+]
