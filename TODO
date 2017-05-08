@@ -1,0 +1,5 @@
++ correct the documentation of the /api/book/{id}/correct routes
++ Book controller
++ frontend login View
++ frontend login controller
++ configure the nodemailer package and start sending mails

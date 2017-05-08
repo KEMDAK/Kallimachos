@@ -39,7 +39,7 @@ module.exports.definePage = function(sequelize) {
       },
       text_gt: {
          type: Sequelize.TEXT,
-         allowNull: false
+         allowNull: true
       }
    },
    {
