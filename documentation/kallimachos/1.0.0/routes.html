@@ -40,14 +40,14 @@
 			<li class="dropdown">
 				<a href="models.list.html" class="dropdown-toggle" data-toggle="dropdown">Models<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="Identity.html">Identity</a></li><li><a href="Log.html">Log</a></li><li><a href="User.html">User</a></li>
+					<li><a href="Book.html">Book</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="routes.html" class="dropdown-toggle" data-toggle="dropdown">Routes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="routes.html#/api/forgotPasswordPOST">/api/forgotPassword POST</a></li><li><a href="routes.html#/api/loginPOST">/api/login POST</a></li><li><a href="routes.html#/api/logoutGET">/api/logout GET</a></li><li><a href="routes.html#/api/resetPasswordPOST">/api/resetPassword POST</a></li><li><a href="routes.html#/api/userPOST">/api/user POST</a></li><li><a href="routes.html#/api/userPUT">/api/user PUT</a></li><li><a href="routes.html#/api/user/activateGET">/api/user/activate GET</a></li><li><a href="routes.html#/api/user/deactivateGET">/api/user/deactivate GET</a></li><li><a href="routes.html#/api/user/%257Bid%257DDELETE">/api/user/{id} DELETE</a></li><li><a href="routes.html#/api/user/%257Bid%257D/suspendGET">/api/user/{id}/suspend GET</a></li><li><a href="routes.html#/api/user/%257Bid%257D/unsuspendGET">/api/user/{id}/unsuspend GET</a></li>
+					<li><a href="routes.html#/api/bookGET">/api/book GET</a></li><li><a href="routes.html#/api/bookPOST">/api/book POST</a></li><li><a href="routes.html#/api/book/%257Bid%257D/correctPOST">/api/book/{id}/correct POST</a></li><li><a href="routes.html#/api/book/%257Bid%257D/evaluateGET">/api/book/{id}/evaluate GET</a></li><li><a href="routes.html#/api/book/%257Bid%257D/page/%257Bpage_number%257DGET">/api/book/{id}/page/{page_number} GET</a></li><li><a href="routes.html#/api/book/%257Bid%257D/page/%257Bpage_number%257DPUT">/api/book/{id}/page/{page_number} PUT</a></li><li><a href="routes.html#/api/book/%257Bid%257D/statusGET">/api/book/{id}/status GET</a></li><li><a href="routes.html#/api/book/%257Bid%257D/trainPOST">/api/book/{id}/train POST</a></li><li><a href="routes.html#/api/forgotPasswordPOST">/api/forgotPassword POST</a></li><li><a href="routes.html#/api/loginPOST">/api/login POST</a></li><li><a href="routes.html#/api/logoutGET">/api/logout GET</a></li><li><a href="routes.html#/api/resetPasswordPOST">/api/resetPassword POST</a></li><li><a href="routes.html#/api/userPOST">/api/user POST</a></li><li><a href="routes.html#/api/userPUT">/api/user PUT</a></li><li><a href="routes.html#/api/user/activateGET">/api/user/activate GET</a></li><li><a href="routes.html#/api/user/deactivateGET">/api/user/deactivate GET</a></li><li><a href="routes.html#/api/user/%257Bid%257DDELETE">/api/user/{id} DELETE</a></li><li><a href="routes.html#/api/user/%257Bid%257D/suspendGET">/api/user/{id}/suspend GET</a></li><li><a href="routes.html#/api/user/%257Bid%257D/unsuspendGET">/api/user/{id}/unsuspend GET</a></li>
 				</ul>
 			</li>
 			
@@ -155,6 +155,780 @@
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<hr>
+<dt class="name" id="/api/bookGET">
+    <h4 id="/api/bookGET"><span class="type-signature"></span>/api/book GET<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A GET route responsible for indexing the books of the user
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route returns as a response an object in the following format
+{
+	status: succeeded/failed (String),
+	message: String showing a descriptive text (String),
+	books:
+	[
+	  {
+	     id: the book&#x27;s id (Integer),
+	     language: the book&#x27;s language (String),
+	     title: the book&#x27;s title (String),
+	     pages_count: The book&#x27;s number of pages (Integer),
+	     gt_exists: The state  of existance of the ground truth (Boolean),
+	     lm_exists: The state  of existance of the lanuage model (Boolean),
+	     start_set The number of the start page of the training set (Integer),
+	     end_set The number of the end page of the training set (Integer),
+	     created_at: The date of the book&#x27;s creation (DateTime),
+	     updated_at: the data of the book&#x27;s last update (DateTime)
+	  }, {...}, ...
+	]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/bookPOST">
+    <h4 id="/api/bookPOST"><span class="type-signature"></span>/api/book POST<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A POST route responsible for storing a given book in the database (registiration).
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
+{
+   title: String,   [required]
+   laguage: String, [required]
+   book: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
+       (
+          .├── gt          [optional]
+           │   ├── 10.g    (all the ground truth file)
+           ├── Images      [required]
+           │   ├── 10.png  (all the pages images file)
+           └── OCR_Output  [required]
+               ├── 10.p    (all the ocr_output pages of the book)
+       )
+}</pre>
+
+    <pre class="sunlight-highlight-javascript">The route returns as a response an object in the following format
+{
+ status: succeeded/failed (String),
+ message: String showing a descriptive text (String),
+	book:
+	{
+	     id: the book&#x27;s id (Integer),
+	     language: the book&#x27;s language (String),
+	     title: the book&#x27;s title (String),
+	     pages_count: The book&#x27;s number of pages (Integer),
+	     gt_exists: The state  of existance of the ground truth (Boolean),
+	     lm_exists: The state  of existance of the lanuage model (Boolean),
+	     start_set The number of the start page of the training set (Integer),
+	     end_set The number of the end page of the training set (Integer),
+	     created_at: The date of the book&#x27;s creation (DateTime),
+	     updated_at: the data of the book&#x27;s last update (DateTime)
+	},
+ error:
+ [
+   {
+      param: the field that caused the error (String),
+      value: the value that was provided for that field (String),
+      type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+   }, {...}, ...
+ ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/correctPOST">
+    <h4 id="/api/book/%7Bid%7D/correctPOST"><span class="type-signature"></span>/api/book/{id}/correct POST<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A POST route to get the suggestions to correct a given text based on the taining
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
+{
+    action: String [&#x27;get_incorrect_words&#x27;, &#x27;get_suggestions&#x27;], [required]
+    text: String, [required if the action is &#x27;get_incorrect_words&#x27;]
+    word: String, [required if the action is &#x27;get_suggestions&#x27;]
+}</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    message: String showing a descriptive text (String)
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/evaluateGET">
+    <h4 id="/api/book/%7Bid%7D/evaluateGET"><span class="type-signature"></span>/api/book/{id}/evaluate GET<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A GET route to evaluate the training efficincy of a book.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    stats:
+    {
+       werBefore: word error rate before training (Integer),
+       werAfter: word error rate after training (Integer),
+       editDistanceBefore: edit distance between the ocr_output and the ground truth before training (Integer),
+       editDistanceAfter: edit distance between the ocr_output and the ground truth after training (Integer),
+       ocrErrorBefore: character error rate before training (Integer),
+       ocrErrorAfter: character error rate after training (Integer)
+    }
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/page/%7Bpage_number%7DGET">
+    <h4 id="/api/book/%7Bid%7D/page/%7Bpage_number%7DGET"><span class="type-signature"></span>/api/book/{id}/page/{page_number} GET<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A GET route to get a specific page of a book
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    message: String showing a descriptive text (String),
+    page:
+    {
+       text: the page text (String),
+       image: the url of the page image (String)
+    }
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/page/%7Bpage_number%7DPUT">
+    <h4 id="/api/book/%7Bid%7D/page/%7Bpage_number%7DPUT"><span class="type-signature"></span>/api/book/{id}/page/{page_number} PUT<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A PUT route to update a specific page of a book
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
+{
+    text: String [required]
+}</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    message: String showing a descriptive text (String)
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/statusGET">
+    <h4 id="/api/book/%7Bid%7D/statusGET"><span class="type-signature"></span>/api/book/{id}/status GET<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A GET route to get the training status of a book
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    isTrained: the training status (Boolean)
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="/api/book/%7Bid%7D/trainPOST">
+    <h4 id="/api/book/%7Bid%7D/trainPOST"><span class="type-signature"></span>/api/book/{id}/train POST<span class="type-signature"> :id</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A POST route to update a specific page of a book
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">id</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Examples</h5>
+        
+    <pre class="sunlight-highlight-javascript">the route expects the access token as &#x27;Authorization&#x27; and the user agent as &#x27;user_agent&#x27; in the request headers with one of the following values [&#x27;Web&#x27;, &#x27;IOS&#x27;, &#x27;Android&#x27;]</pre>
+
+    <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
+{
+    use_gt: Boolean, [required]
+    use_lm: Boolean, [required]
+    start_set: Integer, [required]
+    end_set: Integer [required]
+}</pre>
+
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+{
+    status: succeeded/failed (String),
+    message: String showing a descriptive text (String)
+    error:
+    [
+       {
+          param: the field that caused the error (String),
+          value: the value that was provided for that field (String),
+          type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+       }, {...}, ...
+    ]
+}</pre>
+
+
+    
+</dd>
+
+        
             
 <hr>
 <dt class="name" id="/api/forgotPasswordPOST">
