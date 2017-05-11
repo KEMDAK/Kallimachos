@@ -6,7 +6,7 @@ module.exports = function(app) {
    var BookController = require('../../controllers/BookController');
    var visitor        = require('../../middlewares/VisitorMiddleware');
    var auth           = require('../../middlewares/AuthMiddleware');
-   var upload    = multer({
+   var upload         = require('multer')({
       dest: 'public/uploads/' // The distenation of the uploaded files in the local system
    });
 
@@ -47,9 +47,11 @@ module.exports = function(app) {
    * {
    *    title: String,   [required]
    *    laguage: String, [required]
-   *    book: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
+   *    file: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
    *        (
    *           .├── gt          [optional]
+   *            │   ├── 10.g    (all the ground truth file)
+   *           .├── lm          [optional] TODO fix the documentation
    *            │   ├── 10.g    (all the ground truth file)
    *            ├── Images      [required]
    *            │   ├── 10.png  (all the pages images file)
@@ -79,7 +81,7 @@ module.exports = function(app) {
    *    {
    *       param: the field that caused the error (String),
    *       value: the value that was provided for that field (String),
-   *       type: the type of error that was caused ['required', 'invalid'] (String)
+   *       type: the type of error that was caused ['required', 'invalid', 'unique violation'] (String)
    *    }, {...}, ...
    *  ]
    * }
@@ -110,7 +112,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.get('/api/book/:id/page/:page_number', auth, BookController.getPage);
+   // app.get('/api/book/:id/page/:page_number', auth, BookController.getPage);
 
    /**
    * A PUT route to update a specific page of a book
@@ -135,7 +137,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.put('/api/book/:id/page/:page_number', auth, BookController.setPage);
+   // app.put('/api/book/:id/page/:page_number', auth, BookController.setPage);
 
    /**
    * A POST route to update a specific page of a book
@@ -163,7 +165,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.post('/api/book/:id/train', auth, BookController.train);
+   // app.post('/api/book/:id/train', auth, BookController.train);
 
    /**
    * A GET route to get the training status of a book
@@ -184,7 +186,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.get('/api/book/:id/status', auth, BookController.status);
+   // app.get('/api/book/:id/status', auth, BookController.status);
 
    /**
    * A GET route to evaluate the training efficincy of a book.
@@ -213,7 +215,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.get('/api/book/:id/evaluate', auth, BookController.evaluate);
+   // app.get('/api/book/:id/evaluate', auth, BookController.evaluate);
 
    /**
    * A POST route to get the suggestions to correct a given text based on the taining
@@ -226,7 +228,7 @@ module.exports = function(app) {
    *     text: String, [required if the action is 'get_incorrect_words']
    *     word: String, [required if the action is 'get_suggestions']
    * }
-   * @example The route respond with a json Object having the following format
+   * @example The route respond with a json Object having the following format TODO
    * {
    *     status: succeeded/failed (String),
    *     message: String showing a descriptive text (String)
@@ -240,5 +242,5 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   app.post('/api/book/:id/correct', auth, BookController.correct);
+   // app.post('/api/book/:id/correct', auth, BookController.correct);
 };

@@ -17,7 +17,7 @@ module.exports.definePage = function(sequelize) {
    var Sequelize = require("sequelize");
 
    module.exports.Page = sequelize.define('page',{
-      lanuage: {
+      language: {
          type: Sequelize.STRING,
          allowNull: false
       },

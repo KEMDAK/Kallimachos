@@ -17,8 +17,8 @@ User.hasMany(Log, { as: 'Logs', foreignKey: { allowNull: true }, onDelete: 'SET 
 Log.belongsTo(User, { as: 'User', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
 
 /* Book_User relation */
-User.hasMany(Book, { as: 'Books', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
-Book.belongsTo(User, { as: 'Owner', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
+User.hasMany(Book, { as: 'Books', foreignKey: { allowNull: true, unique: 'compositeIndex'}, onDelete: 'SET NULL' });
+Book.belongsTo(User, { as: 'User', foreignKey: { allowNull: true, unique: 'compositeIndex' }, onDelete: 'NO ACTION' });
 
 /* Book_Page relation */
 Book.hasMany(Page, { as: 'Pages', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });

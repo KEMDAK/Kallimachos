@@ -18,13 +18,14 @@ module.exports.defineBook = function(sequelize) {
    var Sequelize = require("sequelize");
 
    module.exports.Book = sequelize.define('book',{
-      lanuage: {
+      language: {
          type: Sequelize.STRING,
          allowNull: false
       },
       title: {
          type: Sequelize.STRING,
-         allowNull: false
+         allowNull: false,
+         unique: 'compositeIndex'
       },
       pages_count: {
          type: Sequelize.INTEGER,

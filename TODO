@@ -1,4 +1,4 @@
-+ correct the documentation of the /api/book/{id}/correct routes
++ correct the documentation of the /api/book POST
 + Book controller
 + frontend login View
 + frontend login controller
