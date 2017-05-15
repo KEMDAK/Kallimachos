@@ -51,8 +51,8 @@ module.exports = function(app) {
    *        (
    *           .├── gt          [optional]
    *            │   ├── 10.g    (all the ground truth file)
-   *           .├── lm          [optional] TODO fix the documentation
-   *            │   ├── 10.g    (all the ground truth file)
+   *           .├── lm          [optional]
+   *            │   ├── 10.g    (all the ground truth file) TODO fix the documentation
    *            ├── Images      [required]
    *            │   ├── 10.png  (all the pages images file)
    *            └── OCR_Output  [required]

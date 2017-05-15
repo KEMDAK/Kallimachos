@@ -5,6 +5,7 @@
 *  @property {Integer} number The page's number in the book
 *  @property {image} image The page's image absolute url
 *  @property {Text} text_ocr The OCR output of the page's content
+*  @property {Text} text_mc The manually corrected page's content
 *  @property {Text} text_gt The ground truth of the page's content
 */
 
@@ -36,6 +37,10 @@ module.exports.definePage = function(sequelize) {
       text_ocr: {
          type: Sequelize.TEXT,
          allowNull: false
+      },
+      text_mc: {
+         type: Sequelize.TEXT,
+         allowNull: true
       },
       text_gt: {
          type: Sequelize.TEXT,
