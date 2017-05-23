@@ -169,7 +169,7 @@ module.exports.store = function(req, res, next) {
          language: language,
          name: ocrFileNames[i],
          number: i,
-         image: imageDir + imageFileNames[i],
+         image: imageDir.substring(16) + imageFileNames[i],
          text_ocr: ocrPagesContent[i]
       };
 
@@ -285,7 +285,7 @@ module.exports.getPage = function(req, res, next) {
    var id = req.params.id;
    var pageNumber = req.params.page_number;
 
-   Book.findById(id, { include: [ { model: Page, as:'Pages', where: { number: pageNumber } } ] }).then(function(book) {
+   Book.findById(id, { where: { user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: pageNumber } } ] }).then(function(book) {
       if(!book || !book.Pages) {
          res.status(404).json({
             status: 'failed',
@@ -299,7 +299,7 @@ module.exports.getPage = function(req, res, next) {
             status: 'succeeded',
             page: {
                text: (book.Pages[0].text_mc || book.Pages[0].text_ocr),
-               image: book.Pages[0].image
+               image: 'http://' + process.env.DOMAIN + ':' + process.env.PORT + book.Pages[0].image
             }
          });
       }
@@ -362,7 +362,7 @@ module.exports.updatePage = function(req, res, next) {
    var pageNumber = req.params.page_number;
    var text = req.body.text;
 
-   Book.findById(id, { include: [ { model: Page, as:'Pages', where: { number: pageNumber } } ] }).then(function(book) {
+   Book.findById(id, { where: { user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: pageNumber } } ] }).then(function(book) {
       if(!book || !book.Pages) {
          res.status(404).json({
             status: 'failed',
@@ -407,3 +407,33 @@ module.exports.updatePage = function(req, res, next) {
       next();
    });
 };
+
+function readContents(dir, files){
+   var pages = [];
+   _.each(files, function(file) {
+      var page = readPageFromDisk(dir + file);
+      pages.push(page);
+   });
+
+   return pages;
+}
+
+function readPageFromDisk(path){
+   var page = fs.readFileSync(path, {
+      encoding: 'utf8'
+   }).toString();
+   return page;
+}
+
+function naturalCompare(a, b) {
+   var ax = [], bx = [];
+   a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]) });
+   b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]) });
+   while(ax.length && bx.length) {
+      var an = ax.shift();
+      var bn = bx.shift();
+      var nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+      if(nn) return nn;
+   }
+   return ax.length - bx.length;
+}
