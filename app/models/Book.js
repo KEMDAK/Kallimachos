@@ -25,7 +25,7 @@ module.exports.defineBook = function(sequelize) {
       title: {
          type: Sequelize.STRING,
          allowNull: false,
-         unique: 'compositeIndex'
+         unique: 'uniqueBook'
       },
       pages_count: {
          type: Sequelize.INTEGER,

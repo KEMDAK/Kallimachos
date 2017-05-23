@@ -22,13 +22,10 @@ module.exports.definePage = function(sequelize) {
          type: Sequelize.STRING,
          allowNull: false
       },
-      name: {
-         type: Sequelize.STRING,
-         allowNull: false
-      },
       number: {
          type: Sequelize.INTEGER,
-         allowNull: false
+         allowNull: false,
+         unique: 'uniquePage'
       },
       image: {
          type: Sequelize.STRING(300),

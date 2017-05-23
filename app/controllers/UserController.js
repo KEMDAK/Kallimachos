@@ -207,7 +207,7 @@ module.exports.delete = function(req, res, next) {
       if(!user){
          res.status(404).json({
             status: 'failed',
-            message: 'The request route was not Found'
+            message: 'The requested route was not found.'
          });
 
          req.err = 'UserController.js, Line: 213\nThe specified User is not found in the database.\n';

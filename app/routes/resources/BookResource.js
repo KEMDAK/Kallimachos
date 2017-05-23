@@ -52,7 +52,7 @@ module.exports = function(app) {
    *           .├── gt          [optional]
    *            │   ├── 10.g    (all the ground truth file)
    *           .├── lm          [optional]
-   *            │   ├── 10.g    (all the ground truth file) TODO fix the documentation
+   *            │   ├── 1.l    (extra corpus files for the language)
    *            ├── Images      [required]
    *            │   ├── 10.png  (all the pages images file)
    *            └── OCR_Output  [required]
@@ -112,7 +112,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   // app.get('/api/book/:id/page/:page_number', auth, BookController.getPage);
+   app.get('/api/book/:id/page/:page_number', auth, BookController.getPage);
 
    /**
    * A PUT route to update a specific page of a book
@@ -137,7 +137,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   // app.put('/api/book/:id/page/:page_number', auth, BookController.setPage);
+   app.put('/api/book/:id/page/:page_number', auth, BookController.updatePage);
 
    /**
    * A POST route to update a specific page of a book
