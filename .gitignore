@@ -41,3 +41,6 @@ jspm_packages
 
 # uploaded files
 public/uploads
+
+# generated models
+config/data/Models

@@ -7,17 +7,16 @@ class Node {
 }
 
 class Trie {
-   constructor (serializedTrie) {
-      if(!serializedTrie) {
+   constructor (jsonTrie) {
+      if(!jsonTrie) {
          this.totalWords = 0;
          this.root = new Node();
          this.alphabet = new Set();
       }
       else {
-         var trie = JSON.parse(serializedTrie);
-         this.totalWords = trie.totalWords;
-         this.root = trie.root;
-         this.alphabet = new Set(trie.alphabet);
+         this.totalWords = jsonTrie.totalWords;
+         this.root = jsonTrie.root;
+         this.alphabet = new Set(jsonTrie.alphabet);
       }
    }
 
@@ -99,7 +98,7 @@ class Trie {
             temp -= (word.length - index);
 
             if(temp >= 0) {
-               console.log(out, temp);
+               // console.log(out, temp);
                var score = ((cur.words * 1.0 / trie.totalWords)) * ((temp + 1) * 1.0 / (editDistance + 1));
                var oldScore = res[out];
                if(oldScore === undefined || oldScore < score)
@@ -169,17 +168,3 @@ class Trie {
 }
 
 module.exports = Trie;
-// var trie = new Trie();
-// trie.addText('k is one of the english letter,\nand it is good.');
-// console.log(trie.contains('and '));
-// trie.add("kareem");
-// trie.add("dfasf");
-// trie.add("falsem");
-// trie.add("car");
-// trie.add("care");
-// trie.add("cake");
-// console.log(trie.suggestions("fals", 3));
-// // console.log(JSON.stringify(trie));
-// var strie = JSON.stringify(trie);
-// var ntrie = new Trie(strie);
-// console.log(ntrie.suggestions("fals", 3));

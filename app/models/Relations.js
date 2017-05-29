@@ -23,13 +23,13 @@ User.hasMany(Book, { as: 'Books', foreignKey: { allowNull: true, unique: 'unique
 Book.belongsTo(User, { as: 'User', foreignKey: { allowNull: true, unique: 'uniqueBook' }, onDelete: 'NO ACTION' });
 
 /* Book_Language relation */
-Language.hasMany(Book, { as: 'Books', foreignKey: { allowNull: false }, onDelete: 'SET NULL' });
-Book.belongsTo(Language, { as: 'Language', foreignKey: { allowNull: false }, onDelete: 'NO ACTION' });
+Language.hasMany(Book, { as: 'Books', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
+Book.belongsTo(Language, { as: 'Language', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });
 
 /* Book_Page relation */
 Book.hasMany(Page, { as: 'Pages', foreignKey: { allowNull: true, unique: 'uniquePage' }, onDelete: 'SET NULL' });
 Page.belongsTo(Book, { as: 'Book', foreignKey: { allowNull: true, unique: 'uniquePage' }, onDelete: 'NO ACTION' });
 
 /* Book_Corpus relation */
-Book.hasMany(Corpus, { as: 'Corpuses', foreignKey: { allowNull: false }, onDelete: 'SET NULL' });
-Corpus.belongsTo(Book, { as: 'Book', foreignKey: { allowNull: false }, onDelete: 'NO ACTION' });
+Book.hasMany(Corpus, { as: 'Corpuses', foreignKey: { allowNull: true }, onDelete: 'SET NULL' });
+Corpus.belongsTo(Book, { as: 'Book', foreignKey: { allowNull: true }, onDelete: 'NO ACTION' });

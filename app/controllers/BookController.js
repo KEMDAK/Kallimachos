@@ -139,7 +139,7 @@ module.exports.store = function(req, res, next) {
 
    /* extracting the data from the body */
    var title = req.body.title;
-   var language = req.body.language;
+   var language_id = req.body.language_id;
 
    /* reading the OCR_Output files */
    var ocrDir = dirName + '/OCR_Output/';
@@ -207,15 +207,20 @@ module.exports.store = function(req, res, next) {
       start_set: 0,
       end_set: Math.min(20, ocrFileNames.length - 1),
       user_id: req.user.id,
-      language_id: language,
+      language_id: language_id,
       Pages: pages,
       Corpuses: corpuses
    };
 
    Book.create(obj, { include: [ { model: Page, as:'Pages'}, { model: Corpus, as:'Corpuses'} ] }).then(function(book) {
       book = book.toJSON();
+
+      book.language = languages[cur.language_id - 1].name;
+
       delete book.user_id;
+      delete book.language_id;
       delete book.Pages;
+      delete book.Corpuses;
 
       res.status(200).json({
          status: 'succeeded',
@@ -494,12 +499,12 @@ module.exports.train = function(req, res, next) {
 
    /* extracting data */
    var id = req.params.id;
-   var use_gt = req.params.use_gt;
-   var use_extra = req.params.use_extra;
-   var start_set = req.params.start_set;
-   var end_set = req.params.end_set;
+   var use_gt = req.body.use_gt;
+   var use_extra = req.body.use_extra;
+   var start_set = req.body.start_set;
+   var end_set = req.body.end_set;
 
-   Book.findById(id, { where: { user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: { $gte: start_set, $lte: end_set } } }, { model: Corpus, as:'Corpuses' } ] }).then(function(book) {
+   Book.find({ where: { id: id, user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: { $gte: start_set, $lte: end_set } } }, { model: Corpus, as:'Corpuses' } ] }).then(function(book) {
       if(!book) {
          res.status(404).json({
             status: 'failed',
@@ -511,10 +516,17 @@ module.exports.train = function(req, res, next) {
          next();
       }
       else {
-         var defaultTrie = '../../config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
-         var userTrie = '../../config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/lm.json';
+         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
+         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/';
 
-         var trie = new Trie(require(defaultTrie));
+         var trie;
+         if(fs.existsSync(defaultTrie)){
+            trie = new Trie(require(defaultTrie));
+         }
+         else{
+            trie = new Trie();
+         }
+
          if(use_extra) {
             for (var i = 0; i < book.Corpuses.length; i++) {
                trie.addText(book.Corpuses[i].data);
@@ -533,10 +545,13 @@ module.exports.train = function(req, res, next) {
             }
          }
 
-         fs.writeFileSync(userTrie, JSON.stringify(trie), {
+         if(!fs.existsSync(userTrie)){
+            require('mkdirp').sync(userTrie);
+         }
+
+         fs.writeFileSync(userTrie + 'lm.json', JSON.stringify(trie), {
             encoding: 'utf8'
          });
-
          book.start_set = start_set;
          book.end_set = end_set;
 
@@ -560,13 +575,13 @@ module.exports.train = function(req, res, next) {
          });
       }
    }).catch(function(err){
-      /* failed to find the book in the database */
+      /* failed to find the book in the database or failed to build the dictionory */
       res.status(500).json({
          status:'failed',
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 726\nfailed to find the book or the page in the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 726\nfailed to find the book in the database or failed to build the dictionory.\n' + String(err);
 
       next();
    });
