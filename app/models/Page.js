@@ -1,6 +1,5 @@
 /**
 *  @mixin Page
-*  @property {String} language The page's language
 *  @property {String} name The page's name
 *  @property {Integer} number The page's number in the book
 *  @property {image} image The page's image absolute url
@@ -18,10 +17,6 @@ module.exports.definePage = function(sequelize) {
    var Sequelize = require("sequelize");
 
    module.exports.Page = sequelize.define('page',{
-      language: {
-         type: Sequelize.STRING,
-         allowNull: false
-      },
       name: {
          type: Sequelize.STRING,
          allowNull: false

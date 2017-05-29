@@ -1,10 +1,9 @@
 /**
 *  @mixin Book
-*  @property {String} language The book's language
 *  @property {String} title The book's title
 *  @property {Integer} pages_count The book's number of pages
 *  @property {Boolean} gt_exists The state  of existance of the ground truth
-*  @property {Boolean} lm_exists The state  of existance of the lanuage model
+*  @property {Boolean} extra_exists The state  of existance of the lanuage model
 *  @property {Integer} start_set The number of the start page of the training set
 *  @property {Integer} end_set The number of the end page of the training set
 */
@@ -18,10 +17,6 @@ module.exports.defineBook = function(sequelize) {
    var Sequelize = require("sequelize");
 
    module.exports.Book = sequelize.define('book',{
-      language: {
-         type: Sequelize.STRING,
-         allowNull: false
-      },
       title: {
          type: Sequelize.STRING,
          allowNull: false,
@@ -35,7 +30,7 @@ module.exports.defineBook = function(sequelize) {
          type: Sequelize.BOOLEAN,
          allowNull: false
       },
-      lm_exists: {
+      extra_exists: {
          type: Sequelize.BOOLEAN,
          allowNull: false
       },

@@ -184,6 +184,7 @@ module.exports.delete = function(req, res, next) {
    req.sanitizeParams('id').escape();
    req.sanitizeParams('id').trim();
    req.checkParams   ('id','invalid').isInt();
+   req.sanitizeParams('id').toInt();
 
    var errors = req.validationErrors();
    errors = errorFormat(errors);
@@ -277,6 +278,7 @@ module.exports.activationState = function(state) {
          req.sanitizeParams('id').escape();
          req.sanitizeParams('id').trim();
          req.checkParams   ('id','invalid').isInt();
+         req.sanitizeParams('id').toInt();
          id = req.params.id;
       }
 

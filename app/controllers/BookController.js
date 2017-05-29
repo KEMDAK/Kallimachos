@@ -3,14 +3,17 @@
 * @description The controller that is responsible of handling book's requests
 */
 
-var AdmZip = require('adm-zip');
-var fs     = require('fs');
-var rimraf = require('rimraf');
-var _      = require('underscore');
-var User   = require('../models/User').User;
-var Book   = require('../models/Book').Book;
-var Page   = require('../models/Page').Page;
-var format = require('../scripts').errorFormat;
+var AdmZip    = require('adm-zip');
+var fs        = require('fs');
+var rimraf    = require('rimraf');
+var _         = require('underscore');
+var User      = require('../models/User').User;
+var Book      = require('../models/Book').Book;
+var Page      = require('../models/Page').Page;
+var Corpus    = require('../models/Corpus').Corpus;
+var format    = require('../scripts').errorFormat;
+var Trie      = require('../Trie');
+var languages = require('../../config/data/Languages.json');
 
 /**
 * This function gets a list of all books owned by the logged in user currently in the database.
@@ -19,13 +22,16 @@ var format = require('../scripts').errorFormat;
 * @param  {Function} next Callback function that is called once done with handling the request
 */
 module.exports.index = function(req, res, next) {
-   req.user.getBooks().then(function(books) {
+   req.user.getBooks({ where: { id: user.req.id } }).then(function(books) {
       var result = [];
 
       for(var i = 0; i < books.length; i++) {
          var cur = books[i].toJSON();
 
+         cur.language = languages[cur.language_id - 1].name;
+
          delete cur.user_id;
+         delete cur.language_id;
 
          result.push(cur);
       }
@@ -62,11 +68,12 @@ module.exports.store = function(req, res, next) {
    req.sanitizeBody('title').escape();
    req.sanitizeBody('title').trim();
 
-   /* Validate and sanitizing language Input */
-   req.checkBody('language', 'required').notEmpty();
-   req.checkBody('language', 'validity').isIn(['English', 'Latin', 'French']);
-   req.sanitizeBody('language').escape();
-   req.sanitizeBody('language').trim();
+   /* Validate and sanitizing language_id Input */
+   req.checkBody('language_id', 'required').notEmpty();
+   req.sanitizeBody('language_id').escape();
+   req.sanitizeBody('language_id').trim();
+   req.checkBody('language_id', 'validity').isInt({ min: 1, max: languages.length });
+   req.sanitizeBody('language_id').toInt();
 
    var errors = req.validationErrors();
    errors = format(errors);
@@ -95,7 +102,7 @@ module.exports.store = function(req, res, next) {
       }
       else {
          var zip = new AdmZip(req.file.path);
-         zip.extractAllTo(dirName, /*overwrite*/ true);
+         zip.extractAllTo(dirName, /*overwrite*/ false);
 
          if(!(fs.existsSync(dirName + '/OCR_Output') && fs.existsSync(dirName + '/Images'))) {
             if(!errors) errors = [];
@@ -105,7 +112,6 @@ module.exports.store = function(req, res, next) {
                type: 'validity'
             });
 
-            rimraf.sync(dirName);
          }
       }
    }
@@ -125,6 +131,8 @@ module.exports.store = function(req, res, next) {
       req.err = 'BookController.js, Line: 332\nSome validation errors occured.\n' + JSON.stringify(errors);
 
       next();
+
+      rimraf(dirName);
 
       return;
    }
@@ -153,20 +161,18 @@ module.exports.store = function(req, res, next) {
       gtPagesContent = readContents(gtDir, gtFileNames);
    }
 
-   var lmDir = dirName + '/lm/', lmFileNames, lmPagesContent;
-   var lmExists = fs.existsSync(lmDir);
-   // if(lmExists) { // TODO: get it to work
-   //    lmFileNames = fs.readdirSync(lmDir);
-   //    lmFileNames.sort(naturalCompare);
-   //    lmPagesContent = readContents(lmDir, lmFileNames);
-   // }
+   var extraDir = dirName + '/extra/', extraFileNames, extraPagesContent;
+   var extraExists = fs.existsSync(extraDir);
+   if(extraExists) {
+      extraFileNames = fs.readdirSync(extraDir);
+      extraPagesContent = readContents(extraDir, extraFileNames);
+   }
 
    /* creating the page instaces */
    var pages = [];
 
    for (var i = 0; i < ocrFileNames.length; i++) {
-      cur = {
-         language: language,
+      var cur = {
          name: ocrFileNames[i],
          number: i,
          image: imageDir.substring(16) + imageFileNames[i],
@@ -180,19 +186,33 @@ module.exports.store = function(req, res, next) {
       pages.push(cur);
    }
 
+   /* creating the extra corpus */
+   var corpuses = [];
+
+   if(extraExists) {
+      for (var i = 0; i < extraFileNames.length; i++) {
+         var cur = {
+            data: extraPagesContent[i],
+         };
+
+         corpuses.push(cur);
+      }
+   }
+
    var obj = {
-      language: language,
       title: title,
       pages_count: ocrFileNames.length,
       gt_exists: gtExists,
-      lm_exists: lmExists,
+      extra_exists: extraExists,
       start_set: 0,
       end_set: Math.min(20, ocrFileNames.length - 1),
       user_id: req.user.id,
-      Pages: pages
+      language_id: language,
+      Pages: pages,
+      Corpuses: corpuses
    };
 
-   Book.create(obj, { include: [ { model: Page, as:'Pages'} ] }).then(function(book) {
+   Book.create(obj, { include: [ { model: Page, as:'Pages'}, { model: Corpus, as:'Corpuses'} ] }).then(function(book) {
       book = book.toJSON();
       delete book.user_id;
       delete book.Pages;
@@ -206,9 +226,9 @@ module.exports.store = function(req, res, next) {
       next();
 
       /* delete the unneeded directories */
-      rimraf.sync(ocrDir);
-      rimraf.sync(gtDir);
-      rimraf.sync(lmDir);
+      rimraf(ocrDir);
+      rimraf(gtDir);
+      rimraf(extraDir);
    }).catch(function(err) {
       if (err.message === 'Validation error') {
          /* The book violated database constraints */
@@ -243,6 +263,8 @@ module.exports.store = function(req, res, next) {
       }
 
       next();
+
+      rimraf(dirName);
    });
 };
 
@@ -258,12 +280,14 @@ module.exports.getPage = function(req, res, next) {
    req.sanitizeParams('id').escape();
    req.sanitizeParams('id').trim();
    req.checkParams   ('id','validity').isInt();
+   req.sanitizeParams('id').toInt();
 
    /*Validate and sanitizing page_number Input*/
    req.checkParams   ('page_number','required').notEmpty();
    req.sanitizeParams('page_number').escape();
    req.sanitizeParams('page_number').trim();
    req.checkParams   ('page_number','validity').isInt();
+   req.sanitizeParams('page_number').toInt();
 
    var errors = req.validationErrors();
    errors = format(errors);
@@ -330,12 +354,14 @@ module.exports.updatePage = function(req, res, next) {
    req.sanitizeParams('id').escape();
    req.sanitizeParams('id').trim();
    req.checkParams   ('id','validity').isInt();
+   req.sanitizeParams('id').toInt();
 
    /*Validate and sanitizing page_number Input*/
    req.checkParams   ('page_number','required').notEmpty();
    req.sanitizeParams('page_number').escape();
    req.sanitizeParams('page_number').trim();
    req.checkParams   ('page_number','validity').isInt();
+   req.sanitizeParams('page_number').toInt();
 
    /* validating the text input */
    req.checkBody('text', 'required').notEmpty();
@@ -408,6 +434,144 @@ module.exports.updatePage = function(req, res, next) {
    });
 };
 
+/**
+* This function trains the the language model adding using the new given corpus.
+* @param  {HTTP}   req  The request object
+* @param  {HTTP}   res  The response object
+* @param  {Function} next Callback function that is called once done with handling the request
+*/
+module.exports.train = function(req, res, next) {
+   /*Validate and sanitizing ID Input*/
+   req.checkParams   ('id','required').notEmpty();
+   req.sanitizeParams('id').escape();
+   req.sanitizeParams('id').trim();
+   req.checkParams   ('id','validity').isInt();
+   req.sanitizeParams('id').toInt();
+
+   /* validating and senatizing use_gt input */
+   req.checkBody     ('use_gt', 'required').notEmpty();
+   req.sanitizeBody  ('use_gt').escape();
+   req.sanitizeBody  ('use_gt').trim();
+   req.checkBody     ('use_gt', 'validity').isBoolean();
+   req.sanitizeBody  ('use_gt').toBoolean();
+
+   /* validating and senatizing use_extra input */
+   req.checkBody     ('use_extra', 'required').notEmpty();
+   req.sanitizeBody  ('use_extra').escape();
+   req.sanitizeBody  ('use_extra').trim();
+   req.checkBody     ('use_extra', 'validity').isBoolean();
+   req.sanitizeBody  ('use_extra').toBoolean();
+
+   /*Validate and sanitizing start_set Input*/
+   req.checkBody   ('start_set','required').notEmpty();
+   req.sanitizeBody('start_set').escape();
+   req.sanitizeBody('start_set').trim();
+   req.checkBody   ('start_set','validity').isInt();
+   req.sanitizeBody('start_set').toInt();
+
+   /*Validate and sanitizing end_set Input*/
+   req.checkBody   ('end_set','required').notEmpty();
+   req.sanitizeBody('end_set').escape();
+   req.sanitizeBody('end_set').trim();
+   req.checkBody   ('end_set','validity').isInt();
+   req.sanitizeBody('end_set').toInt();
+
+   var errors = req.validationErrors();
+   errors = format(errors);
+   if (errors) {
+      /* input validation failed */
+      res.status(400).json({
+         status: 'failed',
+         errors: errors
+      });
+
+      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+
+      next();
+
+      return;
+   }
+
+   /* extracting data */
+   var id = req.params.id;
+   var use_gt = req.params.use_gt;
+   var use_extra = req.params.use_extra;
+   var start_set = req.params.start_set;
+   var end_set = req.params.end_set;
+
+   Book.findById(id, { where: { user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: { $gte: start_set, $lte: end_set } } }, { model: Corpus, as:'Corpuses' } ] }).then(function(book) {
+      if(!book) {
+         res.status(404).json({
+            status: 'failed',
+            message: 'The requested route was not found.'
+         });
+
+         req.err = 'BookController.js, Line: 678\nThe specified Book was not found in the database.\n';
+
+         next();
+      }
+      else {
+         var defaultTrie = '../../config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
+         var userTrie = '../../config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/lm.json';
+
+         var trie = new Trie(require(defaultTrie));
+         if(use_extra) {
+            for (var i = 0; i < book.Corpuses.length; i++) {
+               trie.addText(book.Corpuses[i].data);
+            }
+         }
+
+         for (var i = 0; i < book.Pages.length; i++) {
+            if(use_gt) {
+               trie.addText(book.Pages[i].text_gt);
+            }
+            if(book.Pages[i].text_mc) {
+               trie.addText(book.Pages[i].text_mc);
+            }
+            else {
+               trie.addText(book.Pages[i].text_ocr);
+            }
+         }
+
+         fs.writeFileSync(userTrie, JSON.stringify(trie), {
+            encoding: 'utf8'
+         });
+
+         book.start_set = start_set;
+         book.end_set = end_set;
+
+         book.save().then(function() {
+            res.status(200).json({
+               status: 'succeeded',
+               message: 'book trained successfully'
+            });
+
+            next();
+         }).catch(function(err){
+            /* failed to save the book in the database */
+            res.status(500).json({
+               status:'failed',
+               message: 'Internal server error'
+            });
+
+            req.err = 'BookController.js, Line: 726\nfailed to save the book in the database.\n' + String(err);
+
+            next();
+         });
+      }
+   }).catch(function(err){
+      /* failed to find the book in the database */
+      res.status(500).json({
+         status:'failed',
+         message: 'Internal server error'
+      });
+
+      req.err = 'BookController.js, Line: 726\nfailed to find the book or the page in the database.\n' + String(err);
+
+      next();
+   });
+};
+
 function readContents(dir, files){
    var pages = [];
    _.each(files, function(file) {
@@ -427,8 +591,8 @@ function readPageFromDisk(path){
 
 function naturalCompare(a, b) {
    var ax = [], bx = [];
-   a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]) });
-   b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]) });
+   a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
+   b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
    while(ax.length && bx.length) {
       var an = ax.shift();
       var bn = bx.shift();

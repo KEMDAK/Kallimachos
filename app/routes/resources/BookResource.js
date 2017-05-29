@@ -27,7 +27,7 @@ module.exports = function(app) {
    * 	     title: the book's title (String),
    * 	     pages_count: The book's number of pages (Integer),
    * 	     gt_exists: The state  of existance of the ground truth (Boolean),
-   * 	     lm_exists: The state  of existance of the lanuage model (Boolean),
+   * 	     extra_exists: The state  of existance of the lanuage model (Boolean),
    * 	     start_set The number of the start page of the training set (Integer),
    * 	     end_set The number of the end page of the training set (Integer),
    * 	     created_at: The date of the book's creation (DateTime),
@@ -46,13 +46,13 @@ module.exports = function(app) {
    * @example The route expects a body Object in the following format
    * {
    *    title: String,   [required]
-   *    laguage: String, [required]
+   *    laguage_id: Integer, [required]
    *    file: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
    *        (
    *           .├── gt          [optional]
    *            │   ├── 10.g    (all the ground truth file)
-   *           .├── lm          [optional]
-   *            │   ├── 1.l    (extra corpus files for the language)
+   *           .├── extra       [optional]
+   *            │   ├── 1.e    (extra corpus files for the Book)
    *            ├── Images      [required]
    *            │   ├── 10.png  (all the pages images file)
    *            └── OCR_Output  [required]
@@ -70,7 +70,7 @@ module.exports = function(app) {
    * 	     title: the book's title (String),
    * 	     pages_count: The book's number of pages (Integer),
    * 	     gt_exists: The state  of existance of the ground truth (Boolean),
-   * 	     lm_exists: The state  of existance of the lanuage model (Boolean),
+   * 	     extra_exists: The state  of existance of the lanuage model (Boolean),
    * 	     start_set The number of the start page of the training set (Integer),
    * 	     end_set The number of the end page of the training set (Integer),
    * 	     created_at: The date of the book's creation (DateTime),
@@ -147,7 +147,7 @@ module.exports = function(app) {
    * @example The route expects a body Object in the following format
    * {
    *     use_gt: Boolean, [required]
-   *     use_lm: Boolean, [required]
+   *     use_extra: Boolean, [required]
    *     start_set: Integer, [required]
    *     end_set: Integer [required]
    * }
@@ -165,7 +165,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   // app.post('/api/book/:id/train', auth, BookController.train);
+   app.post('/api/book/:id/train', auth, BookController.train);
 
    /**
    * A GET route to get the training status of a book
