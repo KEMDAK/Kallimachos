@@ -587,6 +587,166 @@ module.exports.train = function(req, res, next) {
    });
 };
 
+/**
+* This function gives suggestions on how to correct a wrd ot text.
+* @param  {HTTP}   req  The request object
+* @param  {HTTP}   res  The response object
+* @param  {Function} next Callback function that is called once done with handling the request
+*/
+*module.exports.correct = function(req, res, next) {
+   /* Validate and sanitizing ID Input */
+   req.checkParams   ('id','required').notEmpty();
+   req.sanitizeParams('id').escape();
+   req.sanitizeParams('id').trim();
+   req.checkParams   ('id','validity').isInt();
+   req.sanitizeParams('id').toInt();
+
+   /* Validate and sanitizing action input */
+   req.checkHeaders('action', 'required').notEmpty();
+   req.sanitizeHeaders('action').escape();
+   req.checkHeaders('action', 'invalid').isIn(['get_incorrect_words', 'get_suggestions']);
+
+   var errors = req.validationErrors();
+
+   if(!errors) {
+      if(req.body.action == 'get_incorrect_words') {
+         /* Validate and sanitizing text Input */
+         req.checkBody('text', 'required').notEmpty();
+         req.checkBody('text', 'validity').isString();
+         req.sanitizeBody('text').escape();
+         req.sanitizeBody('text').trim();
+      }
+      else {
+         /* Validate and sanitizing word Input */
+         req.checkBody('word', 'required').notEmpty();
+         req.checkBody('word', 'validity').isString();
+         req.sanitizeBody('word').escape();
+         req.sanitizeBody('word').trim();
+      }
+   }
+
+   errors = req.validationErrors();
+   errors = format(errors);
+   if (errors) {
+      /* input validation failed */
+      res.status(400).json({
+         status: 'failed',
+         errors: errors
+      });
+
+      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+
+      next();
+
+      return;
+   }
+
+   var id = req.params.id;
+
+   Book.find({ where: { id: id, user_id: req.user.id } }).then(function(book) {
+      var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
+      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/';
+
+      var trie;
+      if(fs.existsSync(userTrie)){
+         trie = new Trie(require(userTrie));
+      }
+      else if(fs.existsSync(defaultTrie)){
+         trie = new Trie(require(defaultTrie));
+      }
+      else {
+         trie = new Trie();
+      }
+
+      var action = req.body.action;
+
+      if (action == 'get_incorrect_words') {
+         var text = req.body.text;
+         var validator = require('validator');
+
+         var wrong = [];
+         var correct = {};
+
+         var dic = text.split(/[ \n]/);
+
+         for (var i = 0; i < dic.length; i++) {
+            var valid = true;
+            var bef = "";
+            var word = dic[i];
+            var aft = "";
+
+            if(word.matches(".*\\d+.*")) {
+               valid = false;
+            }
+            else if(word.length() > 1) {
+               for (var j = 0; j < word.length(); j++) {
+                  if(!validator.isAlpha(word.charAt(j))) {
+                     bef += word.charAt(j);
+                  }
+                  else{
+                     word = word.substring(j);
+                     break;
+                  }
+               }
+
+
+               for (var j = 0; j < word.length(); j++) {
+                  if(!validator.isAlpha(word.charAt(j))) {
+                     aft = word.substring(j);
+                     word = word.substring(0, j);
+                     break;
+                  }
+               }
+            }
+
+            if(word.length() <= 1) valid = false;
+
+            var best = '';
+            if(valid) {
+               var edit = Math.min((word.length() / 5), 4);
+               edit = Math.max(1, edit);
+               var result = trie.suggestions(word, edit);
+
+               var max = 0;
+               for (var w in result) {
+                  if(result[w] > max) {
+                     max = result[w];
+                     best = w;
+                  }
+               }
+            }
+
+            if(best) {
+               wrong.push(bef + word + aft);
+               correct[bef + word + aft] = bef + best + aft;
+            }
+         }
+
+         res.status(200).json({
+            correct: [correct],
+            incorrect: [wrong]
+         });
+      }
+      else if (action == 'get_suggestions') {
+         var word = req.body.word;
+         var edit = Math.min((word.length() / 5), 4);
+         edit = Math.max(1, edit);
+         var result = trie.suggestions(word, edit);
+
+         var sortable = [];
+         for (var w in result) {
+            sortable.push([w, result[w]]);
+         }
+
+         sortable.sort(function(a, b) {
+            return b[1] - a[1];
+         });
+
+         res.status(200).json([sortable.slice(0, 5)]);
+      }
+   });
+};
+
 function readContents(dir, files){
    var pages = [];
    _.each(files, function(file) {

@@ -242,5 +242,5 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   // app.post('/api/book/:id/correct', auth, BookController.correct);
+   app.post('/api/book/:id/correct', auth, BookController.correct);
 };
