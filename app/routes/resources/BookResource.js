@@ -28,8 +28,8 @@ module.exports = function(app) {
    * 	     pages_count: The book's number of pages (Integer),
    * 	     gt_exists: The state  of existance of the ground truth (Boolean),
    * 	     extra_exists: The state  of existance of the lanuage model (Boolean),
-   * 	     start_set The number of the start page of the training set (Integer),
-   * 	     end_set The number of the end page of the training set (Integer),
+   * 	     start_set: The number of the start page of the training set (Integer),
+   * 	     end_set: The number of the end page of the training set (Integer),
    * 	     created_at: The date of the book's creation (DateTime),
    * 	     updated_at: the data of the book's last update (DateTime)
    * 	  }, {...}, ...
@@ -71,12 +71,12 @@ module.exports = function(app) {
    * 	     pages_count: The book's number of pages (Integer),
    * 	     gt_exists: The state  of existance of the ground truth (Boolean),
    * 	     extra_exists: The state  of existance of the lanuage model (Boolean),
-   * 	     start_set The number of the start page of the training set (Integer),
-   * 	     end_set The number of the end page of the training set (Integer),
+   * 	     start_set: The number of the start page of the training set (Integer),
+   * 	     end_set: The number of the end page of the training set (Integer),
    * 	     created_at: The date of the book's creation (DateTime),
    * 	     updated_at: the data of the book's last update (DateTime)
    * 	},
-   *  error:
+   *  errors:
    *  [
    *    {
    *       param: the field that caused the error (String),
@@ -102,7 +102,7 @@ module.exports = function(app) {
    *        text: the page text (String),
    *        image: the url of the page image (String)
    *     }
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),
@@ -127,7 +127,7 @@ module.exports = function(app) {
    * {
    *     status: succeeded/failed (String),
    *     message: String showing a descriptive text (String)
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),
@@ -155,7 +155,7 @@ module.exports = function(app) {
    * {
    *     status: succeeded/failed (String),
    *     message: String showing a descriptive text (String)
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),
@@ -176,7 +176,7 @@ module.exports = function(app) {
    * {
    *     status: succeeded/failed (String),
    *     isTrained: the training status (Boolean)
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),
@@ -205,7 +205,7 @@ module.exports = function(app) {
    *        ocrErrorBefore: character error rate before training (Integer),
    *        ocrErrorAfter: character error rate after training (Integer)
    *     }
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),
@@ -232,7 +232,7 @@ module.exports = function(app) {
    * {
    *     status: succeeded/failed (String),
    *     message: String showing a descriptive text (String)
-   *     error:
+   *     errors:
    *     [
    *        {
    *           param: the field that caused the error (String),

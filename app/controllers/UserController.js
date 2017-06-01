@@ -75,7 +75,7 @@ module.exports.store = function(req, res, next) {
 
          res.status(400).json({
             status:'failed',
-            error: errors
+            errors: errors
          });
 
          req.err = 'UserController.js, Line: 81\nThe user violated some database constraints.\n' + JSON.stringify(errors);
@@ -195,7 +195,7 @@ module.exports.delete = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'UserController.js, Line: 197\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'UserController.js, Line: 198\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -211,7 +211,7 @@ module.exports.delete = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'UserController.js, Line: 213\nThe specified User is not found in the database.\n';
+         req.err = 'UserController.js, Line: 214\nThe specified User is not found in the database.\n';
 
          next();
       }else{
@@ -232,7 +232,7 @@ module.exports.delete = function(req, res, next) {
                   message: 'Internal server error'
                });
 
-               req.err = 'UserController.js, Line: 234\nCan not delete the User from the database.\n' + String(err);
+               req.err = 'UserController.js, Line: 235\nCan not delete the User from the database.\n' + String(err);
 
                next();
             });
@@ -243,7 +243,7 @@ module.exports.delete = function(req, res, next) {
                message: 'Access Denied'
             });
 
-            req.err = 'UserController.js, Line: 245\ncan not delete an admin or (upper board if req.user is upperboard)\n';
+            req.err = 'UserController.js, Line: 246\ncan not delete an admin or (upper board if req.user is upperboard)\n';
 
             next();
          }
@@ -256,7 +256,7 @@ module.exports.delete = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'UserController.js, Line: 258\nCan not find the User in the database.\n' + String(err);
+      req.err = 'UserController.js, Line: 259\nCan not find the User in the database.\n' + String(err);
 
       next();
    });
@@ -291,7 +291,7 @@ module.exports.activationState = function(state) {
             errors: errors
          });
 
-         req.err = 'UserController.js, Line: 292\nSome validation errors occured.\n' + JSON.stringify(errors);
+         req.err = 'UserController.js, Line: 294\nSome validation errors occured.\n' + JSON.stringify(errors);
 
          next();
 
@@ -320,7 +320,7 @@ module.exports.activationState = function(state) {
                message: 'The requested route was not found.'
             });
 
-            req.err = 'UserController.js, Line: 321\nThe requested user was not found in the database.\n';
+            req.err = 'UserController.js, Line: 323\nThe requested user was not found in the database.\n';
          }
 
          next();
@@ -331,7 +331,7 @@ module.exports.activationState = function(state) {
             message: 'Internal server error'
          });
 
-         req.err = 'UserController.js, Line: 332\nCouldn\'t update the user in the database.\n' + String(err);
+         req.err = 'UserController.js, Line: 334\nCouldn\'t update the user in the database.\n' + String(err);
 
          next();
       });

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Kallimachos Model: User</title>
+	<title>Kallimachos Controller: Auth Controller</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="controllers.list.html" class="dropdown-toggle" data-toggle="dropdown">Controllers<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
+					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-Book%2520Controller.html">Book Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="models.list.html" class="dropdown-toggle" data-toggle="dropdown">Models<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="Book.html">Book</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
+					<li><a href="Book.html">Book</a></li><li><a href="Corpus.html">Corpus</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Language.html">Language</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
 				</ul>
 			</li>
 			
@@ -79,15 +79,10 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Model: User</h1>
+	<h1 class="page-title">Controller: Auth Controller</h1>
 <section>
 
 <header>
-    
-        <h2>
-        User
-        </h2>
-        
     
 </header>
 
@@ -96,182 +91,11 @@
     <div class="container-overview">
     
         
+            <div class="description">The controller that is responsible of handling requests that deals with authentication.</div>
+        
 
         
 <dl class="details">
-    
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The users's account type ('Admin', 'Member')</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>email</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The users's email</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>password</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The users's password</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>active</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Integer</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The user's account state [0 => New User Pending activation, 1 => Activated user, 2 => User deactivated his account, 3 => Suspended User]</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>activation_token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The activation token of the user that could be used to activate the account</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>reset_token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The reset token of the user that could be used to reset the password</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
     
 
 	
@@ -333,7 +157,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="activate"><span class="type-signature"></span>activate(callback)</h4>
+    <h4 class="name" id=".forgotPassword"><span class="type-signature">&lt;static> </span>forgotPassword(req, res, next)</h4>
     
     
 </dt>
@@ -341,7 +165,7 @@
 
     
     <div class="description">
-        This function activates the user.
+        This function recieves and handles forgot password request
     </div>
     
 
@@ -376,7 +200,55 @@
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
             
 
             <td class="type">
@@ -393,7 +265,7 @@
 
             
 
-            <td class="description last">Callback function that is called once the activation is done.</td>
+            <td class="description last">Callback function that is called once done with handling the request</td>
         </tr>
 
     
@@ -461,7 +333,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="deactivate"><span class="type-signature"></span>deactivate(callback)</h4>
+    <h4 class="name" id=".login"><span class="type-signature">&lt;static> </span>login(req, res, next)</h4>
     
     
 </dt>
@@ -469,7 +341,7 @@
 
     
     <div class="description">
-        This function deactivates the user.
+        This function recieves and handles login request
     </div>
     
 
@@ -504,7 +376,55 @@
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
             
 
             <td class="type">
@@ -521,7 +441,7 @@
 
             
 
-            <td class="description last">Callback function that is called once the deactivation is done.</td>
+            <td class="description last">Callback function that is called once done with handling the request</td>
         </tr>
 
     
@@ -589,7 +509,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="isAdmin"><span class="type-signature"></span>isAdmin()</h4>
+    <h4 class="name" id=".logout"><span class="type-signature">&lt;static> </span>logout(req, res, next)</h4>
     
     
 </dt>
@@ -597,211 +517,7 @@
 
     
     <div class="description">
-        This function checks if the user is an Admin.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    true if user is an Admin.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="isMember"><span class="type-signature"></span>isMember()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        This function checks if the user is a Member.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    true if user is a Member.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="nullifyActivationToken"><span class="type-signature"></span>nullifyActivationToken(callback)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        This function nullifies the avtivation token of the user.
+        This function handles /logout get request by removing the corresponding identity from the database
     </div>
     
 
@@ -836,7 +552,55 @@
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request Object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response Object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
             
 
             <td class="type">
@@ -853,7 +617,7 @@
 
             
 
-            <td class="description last">Callback function that is called once the nullification is done.</td>
+            <td class="description last">Callback function that is called once done with handling the request</td>
         </tr>
 
     
@@ -921,7 +685,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="nullifyResetToken"><span class="type-signature"></span>nullifyResetToken(callback)</h4>
+    <h4 class="name" id=".resetPassword"><span class="type-signature">&lt;static> </span>resetPassword(req, res, next)</h4>
     
     
 </dt>
@@ -929,7 +693,7 @@
 
     
     <div class="description">
-        This function nullifies the reset token of the user.
+        This function recieves and handles reset password request
     </div>
     
 
@@ -964,7 +728,55 @@
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
             
 
             <td class="type">
@@ -981,7 +793,7 @@
 
             
 
-            <td class="description last">Callback function that is called once the nullification is done.</td>
+            <td class="description last">Callback function that is called once done with handling the request</td>
         </tr>
 
     
@@ -1041,388 +853,6 @@
     
 
     
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="suspend"><span class="type-signature"></span>suspend(callback)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        This function suspends the user.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback function that is called once the user is suspended.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="toJSON"><span class="type-signature"></span>toJSON()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        this function nreturns the user object.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The user object.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="validPassword"><span class="type-signature"></span>validPassword(password)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        This function validates the password of the user.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>password</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the claimed password.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    true if the claimed password matches the real one.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>

@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="controllers.list.html" class="dropdown-toggle" data-toggle="dropdown">Controllers<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
+					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-Book%2520Controller.html">Book Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="models.list.html" class="dropdown-toggle" data-toggle="dropdown">Models<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="Book.html">Book</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
+					<li><a href="Book.html">Book</a></li><li><a href="Corpus.html">Corpus</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Language.html">Language</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
 				</ul>
 			</li>
 			
@@ -228,7 +228,7 @@
 	     title: the book&#x27;s title (String),
 	     pages_count: The book&#x27;s number of pages (Integer),
 	     gt_exists: The state  of existance of the ground truth (Boolean),
-	     lm_exists: The state  of existance of the lanuage model (Boolean),
+	     extra_exists: The state  of existance of the lanuage model (Boolean),
 	     start_set The number of the start page of the training set (Integer),
 	     end_set The number of the end page of the training set (Integer),
 	     created_at: The date of the book&#x27;s creation (DateTime),
@@ -306,11 +306,13 @@
     <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
 {
    title: String,   [required]
-   laguage: String, [required]
-   book: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
+   laguage_id: Integer, [required]
+   file: (.zip) file with the following structure of folders nad file formats with correspondent names: [required]
        (
           .├── gt          [optional]
            │   ├── 10.g    (all the ground truth file)
+          .├── extra       [optional]
+           │   ├── 1.e    (extra corpus files for the Book)
            ├── Images      [required]
            │   ├── 10.png  (all the pages images file)
            └── OCR_Output  [required]
@@ -329,18 +331,18 @@
 	     title: the book&#x27;s title (String),
 	     pages_count: The book&#x27;s number of pages (Integer),
 	     gt_exists: The state  of existance of the ground truth (Boolean),
-	     lm_exists: The state  of existance of the lanuage model (Boolean),
+	     extra_exists: The state  of existance of the lanuage model (Boolean),
 	     start_set The number of the start page of the training set (Integer),
 	     end_set The number of the end page of the training set (Integer),
 	     created_at: The date of the book&#x27;s creation (DateTime),
 	     updated_at: the data of the book&#x27;s last update (DateTime)
 	},
- error:
+ errors:
  [
    {
       param: the field that caused the error (String),
       value: the value that was provided for that field (String),
-      type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;] (String)
+      type: the type of error that was caused [&#x27;required&#x27;, &#x27;invalid&#x27;, &#x27;unique violation&#x27;] (String)
    }, {...}, ...
  ]
 }</pre>
@@ -429,11 +431,11 @@
     word: String, [required if the action is &#x27;get_suggestions&#x27;]
 }</pre>
 
-    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format
+    <pre class="sunlight-highlight-javascript">The route respond with a json Object having the following format TODO
 {
     status: succeeded/failed (String),
     message: String showing a descriptive text (String)
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -532,7 +534,7 @@
        ocrErrorBefore: character error rate before training (Integer),
        ocrErrorAfter: character error rate after training (Integer)
     }
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -628,7 +630,7 @@
        text: the page text (String),
        image: the url of the page image (String)
     }
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -724,7 +726,7 @@
 {
     status: succeeded/failed (String),
     message: String showing a descriptive text (String)
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -815,7 +817,7 @@
 {
     status: succeeded/failed (String),
     isTrained: the training status (Boolean)
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -905,7 +907,7 @@
     <pre class="sunlight-highlight-javascript">The route expects a body Object in the following format
 {
     use_gt: Boolean, [required]
-    use_lm: Boolean, [required]
+    use_extra: Boolean, [required]
     start_set: Integer, [required]
     end_set: Integer [required]
 }</pre>
@@ -914,7 +916,7 @@
 {
     status: succeeded/failed (String),
     message: String showing a descriptive text (String)
-    error:
+    errors:
     [
        {
           param: the field that caused the error (String),
@@ -999,7 +1001,7 @@
 {
 	status: succeeded/failed (String),
 	message: String showing a descriptive text (String),
-	error:
+	errors:
 	[
 	  {
 	     param: the field that caused the error (String),
@@ -1094,7 +1096,7 @@
       type: the type of the account [&#x27;Admin&#x27;, &#x27;Member&#x27;] (String),
       email: the logged in user email (String)
    }
-	error:
+	errors:
 	[
 	  {
 	     param: the field that caused the error (String),
@@ -1253,7 +1255,7 @@
 {
 	status: succeeded/failed (String),
 	message: Descriptive text about the errors (String),
-	error:
+	errors:
 	[
 	  {
 	     param: the field that caused the error (String),
@@ -1339,7 +1341,7 @@
 {
  status: succeeded/failed (String),
  message: String showing a descriptive text (String),
- error:
+ errors:
  [
    {
       param: the field that caused the error (String),
@@ -1425,7 +1427,7 @@
 {
  status: succeeded/failed (String),
  message: String showing a descriptive text (String),
- error:
+ errors:
  [
    {
       param: the field that caused the error (String),
@@ -1666,7 +1668,7 @@
 {
   status: succeeded/failed (String),
   message: String showing a descriptive text (String),
-  error:
+  errors:
   [
     {
        param: the field that caused the error (String),

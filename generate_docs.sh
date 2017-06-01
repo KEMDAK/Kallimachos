@@ -10,7 +10,7 @@ find ./documentation -type f -exec sed -i -e 's/\Modules\b/Controllers/g' {} \;
 find ./documentation -type f -exec sed -i -e 's/\Module\b/Controller/g' {} \;
 find ./documentation -type f -exec sed -i -e 's/\modules\b/controllers/g' {} \;
 find ./documentation -type f -exec sed -i -e 's/\module\b/controller/g' {} \;
-rename 's/global/routes/' ./documentation/kallimachos/*/*
-rename 's/mixins/models/' ./documentation/kallimachos/*/*
-rename 's/modules/controllers/' ./documentation/kallimachos/*/*
-rename 's/module/controller/' ./documentation/kallimachos/*/*
+rename 's/global/routes/' ./documentation/any_base_ocr/*/*
+rename 's/mixins/models/' ./documentation/any_base_ocr/*/*
+rename 's/modules/controllers/' ./documentation/any_base_ocr/*/*
+rename 's/module/controller/' ./documentation/any_base_ocr/*/*

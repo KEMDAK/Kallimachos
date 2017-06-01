@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Kallimachos Controller: Auth Controller</title>
+	<title>Kallimachos Controller: Book Controller</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="controllers.list.html" class="dropdown-toggle" data-toggle="dropdown">Controllers<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
+					<li><a href="controller-Auth%2520Controller.html">Auth Controller</a></li><li><a href="controller-Book%2520Controller.html">Book Controller</a></li><li><a href="controller-User%2520Controller.html">User Controller</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="models.list.html" class="dropdown-toggle" data-toggle="dropdown">Models<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="Book.html">Book</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
+					<li><a href="Book.html">Book</a></li><li><a href="Corpus.html">Corpus</a></li><li><a href="Identity.html">Identity</a></li><li><a href="Language.html">Language</a></li><li><a href="Log.html">Log</a></li><li><a href="Page.html">Page</a></li><li><a href="User.html">User</a></li>
 				</ul>
 			</li>
 			
@@ -79,7 +79,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Controller: Auth Controller</h1>
+	<h1 class="page-title">Controller: Book Controller</h1>
 <section>
 
 <header>
@@ -91,7 +91,7 @@
     <div class="container-overview">
     
         
-            <div class="description">The controller that is responsible of handling requests that deals with authentication.</div>
+            <div class="description">The controller that is responsible of handling book's requests</div>
         
 
         
@@ -157,7 +157,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".forgotPassword"><span class="type-signature">&lt;static> </span>forgotPassword(req, res, next)</h4>
+    <h4 class="name" id=".correct"><span class="type-signature">&lt;static> </span>correct(req, res, next)</h4>
     
     
 </dt>
@@ -165,7 +165,7 @@
 
     
     <div class="description">
-        This function recieves and handles forgot password request
+        This function gives suggestions on how to correct a wrd ot text.
     </div>
     
 
@@ -333,7 +333,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".login"><span class="type-signature">&lt;static> </span>login(req, res, next)</h4>
+    <h4 class="name" id=".getPage"><span class="type-signature">&lt;static> </span>getPage(req, res, next)</h4>
     
     
 </dt>
@@ -341,7 +341,7 @@
 
     
     <div class="description">
-        This function recieves and handles login request
+        This function gets a specific page of the book.
     </div>
     
 
@@ -509,7 +509,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".logout"><span class="type-signature">&lt;static> </span>logout(req, res, next)</h4>
+    <h4 class="name" id=".index"><span class="type-signature">&lt;static> </span>index(req, res, next)</h4>
     
     
 </dt>
@@ -517,7 +517,7 @@
 
     
     <div class="description">
-        This function handles /logout get request by removing the corresponding identity from the database
+        This function gets a list of all books owned by the logged in user currently in the database.
     </div>
     
 
@@ -569,7 +569,7 @@
 
             
 
-            <td class="description last">The request Object</td>
+            <td class="description last">The request object</td>
         </tr>
 
     
@@ -593,7 +593,7 @@
 
             
 
-            <td class="description last">The response Object</td>
+            <td class="description last">The response object</td>
         </tr>
 
     
@@ -685,7 +685,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".resetPassword"><span class="type-signature">&lt;static> </span>resetPassword(req, res, next)</h4>
+    <h4 class="name" id=".store"><span class="type-signature">&lt;static> </span>store(req, res, next)</h4>
     
     
 </dt>
@@ -693,7 +693,359 @@
 
     
     <div class="description">
-        This function recieves and handles reset password request
+        This function stores the provided book in the database
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback function that is called once done with handling the request</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".train"><span class="type-signature">&lt;static> </span>train(req, res, next)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        This function trains the the language model adding using the new given corpus.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The request object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTTP</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The response object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback function that is called once done with handling the request</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".updatePage"><span class="type-signature">&lt;static> </span>updatePage(req, res, next)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        This function updates the text of a specific page of the book.
     </div>
     
 

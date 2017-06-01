@@ -23,7 +23,7 @@ module.exports = function(app) {
     * {
     *  status: succeeded/failed (String),
     *  message: String showing a descriptive text (String),
-    *  error:
+    *  errors:
     *  [
     *    {
     *       param: the field that caused the error (String),
@@ -49,7 +49,7 @@ module.exports = function(app) {
     * {
     *  status: succeeded/failed (String),
     *  message: String showing a descriptive text (String),
-    *  error:
+    *  errors:
     *  [
     *    {
     *       param: the field that caused the error (String),
@@ -72,7 +72,7 @@ module.exports = function(app) {
     * {
     *   status: succeeded/failed (String),
     *   message: String showing a descriptive text (String),
-    *   error:
+    *   errors:
     *   [
     *     {
     *        param: the field that caused the error (String),

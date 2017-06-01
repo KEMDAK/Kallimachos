@@ -22,7 +22,7 @@ var languages = require('../../config/data/Languages.json');
 * @param  {Function} next Callback function that is called once done with handling the request
 */
 module.exports.index = function(req, res, next) {
-   req.user.getBooks({ where: { id: user.req.id } }).then(function(books) {
+   req.user.getBooks().then(function(books) {
       var result = [];
 
       for(var i = 0; i < books.length; i++) {
@@ -49,7 +49,7 @@ module.exports.index = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 109\nCouldn\'t retreive the books from the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 52\nCouldn\'t retreive the books from the database.\n' + String(err);
 
       next();
    });
@@ -89,6 +89,7 @@ module.exports.store = function(req, res, next) {
       });
    }
 
+   var unique = true;
    if(!errors) {
       dirName = './public/uploads/' + req.user.id + '/' + req.body.title;
       if(fs.existsSync(dirName)) {
@@ -99,6 +100,8 @@ module.exports.store = function(req, res, next) {
             value: req.body.title,
             type: 'unique violation'
          });
+
+         unique = false;
       }
       else {
          var zip = new AdmZip(req.file.path);
@@ -128,11 +131,13 @@ module.exports.store = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 332\nSome validation errors occured.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 131\nSome validation errors occured.\n' + JSON.stringify(errors);
 
       next();
 
-      rimraf(dirName);
+      if(unique){
+         rimraf(dirName, function() {});
+      }
 
       return;
    }
@@ -215,7 +220,7 @@ module.exports.store = function(req, res, next) {
    Book.create(obj, { include: [ { model: Page, as:'Pages'}, { model: Corpus, as:'Corpuses'} ] }).then(function(book) {
       book = book.toJSON();
 
-      book.language = languages[cur.language_id - 1].name;
+      book.language = languages[language_id - 1].name;
 
       delete book.user_id;
       delete book.language_id;
@@ -252,10 +257,10 @@ module.exports.store = function(req, res, next) {
 
          res.status(400).json({
             status:'failed',
-            error: errors
+            errors: errors
          });
 
-         req.err = 'BookController.js, Line: 468\nThe book violated some database constraints.\n' + JSON.stringify(errors);
+         req.err = 'BookController.js, Line: 258\nThe book violated some database constraints.\n' + JSON.stringify(errors);
       }
       else {
          /* failed to save the book in the database */
@@ -264,7 +269,7 @@ module.exports.store = function(req, res, next) {
             message: 'Internal server error'
          });
 
-         req.err = 'BookController.js, Line: 477\nCouldn\'t save the book in the database.\n' + String(err);
+         req.err = 'BookController.js, Line: 267\nCouldn\'t save the book in the database.\n' + String(err);
       }
 
       next();
@@ -303,7 +308,7 @@ module.exports.getPage = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 306\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -321,7 +326,7 @@ module.exports.getPage = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 678\nThe specified Book or page is not found in the database.\n';
+         req.err = 'BookController.js, Line: 324\nThe specified Book or page is not found in the database.\n';
       }
       else {
          res.status(200).json({
@@ -341,7 +346,7 @@ module.exports.getPage = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 726\nfailed to find the book or the page in the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 344\nfailed to find the book or the page in the database.\n' + String(err);
 
       next();
    });
@@ -381,7 +386,7 @@ module.exports.updatePage = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 384\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -400,7 +405,7 @@ module.exports.updatePage = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 678\nThe specified Book or page is not found in the database.\n';
+         req.err = 'BookController.js, Line: 403\nThe specified Book or page is not found in the database.\n';
 
          next();
       }
@@ -421,7 +426,7 @@ module.exports.updatePage = function(req, res, next) {
                message: 'Internal server error'
             });
 
-            req.err = 'BookController.js, Line: 726\nfailed to update the page in the database.\n' + String(err);
+            req.err = 'BookController.js, Line: 424\nfailed to update the page in the database.\n' + String(err);
 
             next();
          });
@@ -433,7 +438,7 @@ module.exports.updatePage = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 726\nfailed to find the book or the page in the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 436\nfailed to find the book or the page in the database.\n' + String(err);
 
       next();
    });
@@ -490,7 +495,7 @@ module.exports.train = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 493\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -511,7 +516,7 @@ module.exports.train = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 678\nThe specified Book was not found in the database.\n';
+         req.err = 'BookController.js, Line: 514\nThe specified Book was not found in the database.\n';
 
          next();
       }
@@ -521,7 +526,7 @@ module.exports.train = function(req, res, next) {
 
          var trie;
          if(fs.existsSync(defaultTrie)){
-            trie = new Trie(require(defaultTrie));
+            trie = new Trie(require('../../' + defaultTrie));
          }
          else{
             trie = new Trie();
@@ -537,7 +542,7 @@ module.exports.train = function(req, res, next) {
             if(use_gt) {
                trie.addText(book.Pages[i].text_gt);
             }
-            if(book.Pages[i].text_mc) {
+            else if(book.Pages[i].text_mc) {
                trie.addText(book.Pages[i].text_mc);
             }
             else {
@@ -569,7 +574,7 @@ module.exports.train = function(req, res, next) {
                message: 'Internal server error'
             });
 
-            req.err = 'BookController.js, Line: 726\nfailed to save the book in the database.\n' + String(err);
+            req.err = 'BookController.js, Line: 572\nfailed to save the book in the database.\n' + String(err);
 
             next();
          });
@@ -581,7 +586,7 @@ module.exports.train = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 726\nfailed to find the book in the database or failed to build the dictionory.\n' + String(err);
+      req.err = 'BookController.js, Line: 584\nfailed to find the book in the database or failed to build the dictionory.\n' + String(err);
 
       next();
    });
@@ -593,7 +598,7 @@ module.exports.train = function(req, res, next) {
 * @param  {HTTP}   res  The response object
 * @param  {Function} next Callback function that is called once done with handling the request
 */
-*module.exports.correct = function(req, res, next) {
+module.exports.correct = function(req, res, next) {
    /* Validate and sanitizing ID Input */
    req.checkParams   ('id','required').notEmpty();
    req.sanitizeParams('id').escape();
@@ -602,9 +607,9 @@ module.exports.train = function(req, res, next) {
    req.sanitizeParams('id').toInt();
 
    /* Validate and sanitizing action input */
-   req.checkHeaders('action', 'required').notEmpty();
-   req.sanitizeHeaders('action').escape();
-   req.checkHeaders('action', 'invalid').isIn(['get_incorrect_words', 'get_suggestions']);
+   req.checkBody('action', 'required').notEmpty();
+   req.sanitizeBody('action').escape();
+   req.checkBody('action', 'invalid').isIn(['get_incorrect_words', 'get_suggestions']);
 
    var errors = req.validationErrors();
 
@@ -634,7 +639,7 @@ module.exports.train = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 663\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 637\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -645,14 +650,14 @@ module.exports.train = function(req, res, next) {
 
    Book.find({ where: { id: id, user_id: req.user.id } }).then(function(book) {
       var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
-      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/';
+      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/lm.json';
 
       var trie;
       if(fs.existsSync(userTrie)){
-         trie = new Trie(require(userTrie));
+         trie = new Trie(require('../../' + userTrie));
       }
       else if(fs.existsSync(defaultTrie)){
-         trie = new Trie(require(defaultTrie));
+         trie = new Trie(require('../../' + defaultTrie));
       }
       else {
          trie = new Trie();
@@ -662,12 +667,12 @@ module.exports.train = function(req, res, next) {
 
       if (action == 'get_incorrect_words') {
          var text = req.body.text;
-         var validator = require('validator');
+         var Regex = require('../Regex');
 
          var wrong = [];
          var correct = {};
 
-         var dic = text.split(/[ \n]/);
+         var dic = text.split(/[ \n]+/gm);
 
          for (var i = 0; i < dic.length; i++) {
             var valid = true;
@@ -675,12 +680,13 @@ module.exports.train = function(req, res, next) {
             var word = dic[i];
             var aft = "";
 
-            if(word.matches(".*\\d+.*")) {
+            if(Regex.numberWithPuncs.test(word)) {
+               console.log(word);
                valid = false;
             }
-            else if(word.length() > 1) {
-               for (var j = 0; j < word.length(); j++) {
-                  if(!validator.isAlpha(word.charAt(j))) {
+            else if(word.length > 1) {
+               for (var j = 0; j < word.length; j++) {
+                  if(Regex.punctuation.test(word.charAt(j))) {
                      bef += word.charAt(j);
                   }
                   else{
@@ -689,22 +695,20 @@ module.exports.train = function(req, res, next) {
                   }
                }
 
-
-               for (var j = 0; j < word.length(); j++) {
-                  if(!validator.isAlpha(word.charAt(j))) {
-                     aft = word.substring(j);
-                     word = word.substring(0, j);
+               for (var j = word.length - 1; j >= 0; j--) {
+                  if(Regex.letter.test(word.charAt(j))) {
+                     aft = word.substring(j + 1);
+                     word = word.substring(0, j + 1);
                      break;
                   }
                }
             }
 
-            if(word.length() <= 1) valid = false;
-
+            if(word.length <= 1) valid = false;
             var best = '';
             if(valid) {
-               var edit = Math.min((word.length() / 5), 4);
-               edit = Math.max(1, edit);
+               var edit = Math.min(Math.floor((word.length / 5)), 4);
+               edit = Math.max(2, edit);
                var result = trie.suggestions(word, edit);
 
                var max = 0;
@@ -729,8 +733,8 @@ module.exports.train = function(req, res, next) {
       }
       else if (action == 'get_suggestions') {
          var word = req.body.word;
-         var edit = Math.min((word.length() / 5), 4);
-         edit = Math.max(1, edit);
+         var edit = Math.min(Math.floor((word.length / 5)), 4);
+         edit = Math.max(2, edit);
          var result = trie.suggestions(word, edit);
 
          var sortable = [];
@@ -742,8 +746,25 @@ module.exports.train = function(req, res, next) {
             return b[1] - a[1];
          });
 
-         res.status(200).json([sortable.slice(0, 5)]);
+         var finalResult = [];
+         for(var j = 0; j < 5 && j < sortable.length; j++) {
+            finalResult.push(sortable[j][0]);
+         }
+
+         res.status(200).json(finalResult);
       }
+
+      next();
+   }).catch(function(err){
+      /* failed to find the book in the database or failed to spell check */
+      res.status(500).json({
+         status:'failed',
+         message: 'Internal server error'
+      });
+
+      req.err = 'BookController.js, Line: 584\nfailed to find the book in the database or failed to spell check.\n' + String(err);
+
+      next();
    });
 };
 

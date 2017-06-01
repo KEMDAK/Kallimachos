@@ -139,24 +139,23 @@ class Trie {
    }
 
    addText (text) {
-      var validator = require('validator');
-
-      var dic = text.split(/[ \n]/);
+      var dic = text.split(/[ \n]+/gm);
+      var Regex = require('./Regex');
 
       for (var i = 0; i < dic.length; i++) {
          var word = dic[i].toLowerCase();
 
          if(word.length > 1) {
             for (var j = 0; j < word.length; j++) {
-               if(validator.isAlpha(word.charAt(j))) {
+               if(Regex.letter.test(word.charAt(j))) {
                   word = word.substring(j);
                   break;
                }
             }
 
-            for (var j = 0; j < word.length; j++) {
-               if(!validator.isAlpha(word.charAt(j))) {
-                  word = word.substring(0, j);
+            for (var j = word.length - 1; j >= 0; j--) {
+               if(Regex.letter.test(word.charAt(j))) {
+                  word = word.substring(0, j + 1);
                   break;
                }
             }

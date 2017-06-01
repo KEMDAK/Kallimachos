@@ -1,6 +1,2 @@
-+ correct the documentation of the /api/book POST
-+ Book controller
-+ frontend login View
-+ frontend login controller
++ correct the documentation of the /api/book/:id/correct POST
 + configure the nodemailer package and start sending mails
-+ make the final decision cornering lm
