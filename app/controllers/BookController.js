@@ -616,10 +616,10 @@ module.exports.correct = function(req, res, next) {
    if(!errors) {
       if(req.body.action == 'get_incorrect_words') {
          /* Validate and sanitizing text Input */
-         req.checkBody('text', 'required').notEmpty();
-         req.checkBody('text', 'validity').isString();
-         req.sanitizeBody('text').escape();
-         req.sanitizeBody('text').trim();
+         req.checkBody('text[]', 'required').notEmpty();
+         req.checkBody('text[]', 'validity').isString();
+         req.sanitizeBody('text[]').escape();
+         req.sanitizeBody('text[]').trim();
       }
       else {
          /* Validate and sanitizing word Input */
@@ -666,7 +666,7 @@ module.exports.correct = function(req, res, next) {
       var action = req.body.action;
 
       if (action == 'get_incorrect_words') {
-         var text = req.body.text;
+         var text = req.body['text[]'];
          var Regex = require('../Regex');
 
          var wrong = [];
@@ -681,7 +681,6 @@ module.exports.correct = function(req, res, next) {
             var aft = "";
 
             if(Regex.numberWithPuncs.test(word)) {
-               console.log(word);
                valid = false;
             }
             else if(word.length > 1) {
@@ -708,7 +707,7 @@ module.exports.correct = function(req, res, next) {
             var best = '';
             if(valid) {
                var edit = Math.min(Math.floor((word.length / 5)), 4);
-               edit = Math.max(2, edit);
+               edit = Math.max(1, edit);
                var result = trie.suggestions(word, edit);
 
                var max = 0;
@@ -734,7 +733,7 @@ module.exports.correct = function(req, res, next) {
       else if (action == 'get_suggestions') {
          var word = req.body.word;
          var edit = Math.min(Math.floor((word.length / 5)), 4);
-         edit = Math.max(2, edit);
+         edit = Math.max(1, edit);
          var result = trie.suggestions(word, edit);
 
          var sortable = [];
