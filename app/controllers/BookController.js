@@ -131,7 +131,7 @@ module.exports.store = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 131\nSome validation errors occured.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 134\nSome validation errors occured.\n' + JSON.stringify(errors);
 
       next();
 
@@ -260,7 +260,7 @@ module.exports.store = function(req, res, next) {
             errors: errors
          });
 
-         req.err = 'BookController.js, Line: 258\nThe book violated some database constraints.\n' + JSON.stringify(errors);
+         req.err = 'BookController.js, Line: 263\nThe book violated some database constraints.\n' + JSON.stringify(errors);
       }
       else {
          /* failed to save the book in the database */
@@ -269,7 +269,7 @@ module.exports.store = function(req, res, next) {
             message: 'Internal server error'
          });
 
-         req.err = 'BookController.js, Line: 267\nCouldn\'t save the book in the database.\n' + String(err);
+         req.err = 'BookController.js, Line: 272\nCouldn\'t save the book in the database.\n' + String(err);
       }
 
       next();
@@ -308,7 +308,7 @@ module.exports.getPage = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 306\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 311\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -326,7 +326,7 @@ module.exports.getPage = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 324\nThe specified Book or page is not found in the database.\n';
+         req.err = 'BookController.js, Line: 329\nThe specified Book or page is not found in the database.\n';
       }
       else {
          res.status(200).json({
@@ -346,7 +346,7 @@ module.exports.getPage = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 344\nfailed to find the book or the page in the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 349\nfailed to find the book or the page in the database.\n' + String(err);
 
       next();
    });
@@ -386,7 +386,7 @@ module.exports.updatePage = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 384\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 389\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -405,7 +405,7 @@ module.exports.updatePage = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 403\nThe specified Book or page is not found in the database.\n';
+         req.err = 'BookController.js, Line: 408\nThe specified Book or page is not found in the database.\n';
 
          next();
       }
@@ -426,7 +426,7 @@ module.exports.updatePage = function(req, res, next) {
                message: 'Internal server error'
             });
 
-            req.err = 'BookController.js, Line: 424\nfailed to update the page in the database.\n' + String(err);
+            req.err = 'BookController.js, Line: 429\nfailed to update the page in the database.\n' + String(err);
 
             next();
          });
@@ -438,7 +438,7 @@ module.exports.updatePage = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 436\nfailed to find the book or the page in the database.\n' + String(err);
+      req.err = 'BookController.js, Line: 441\nfailed to find the book or the page in the database.\n' + String(err);
 
       next();
    });
@@ -495,7 +495,7 @@ module.exports.train = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 493\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 498\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -516,13 +516,13 @@ module.exports.train = function(req, res, next) {
             message: 'The requested route was not found.'
          });
 
-         req.err = 'BookController.js, Line: 514\nThe specified Book was not found in the database.\n';
+         req.err = 'BookController.js, Line: 519\nThe specified Book was not found in the database.\n';
 
          next();
       }
       else {
-         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
-         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/';
+         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
+         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/';
 
          var trie;
          if(fs.existsSync(defaultTrie)){
@@ -574,7 +574,7 @@ module.exports.train = function(req, res, next) {
                message: 'Internal server error'
             });
 
-            req.err = 'BookController.js, Line: 572\nfailed to save the book in the database.\n' + String(err);
+            req.err = 'BookController.js, Line: 577\nfailed to save the book in the database.\n' + String(err);
 
             next();
          });
@@ -586,7 +586,7 @@ module.exports.train = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 584\nfailed to find the book in the database or failed to build the dictionory.\n' + String(err);
+      req.err = 'BookController.js, Line: 589\nfailed to find the book in the database or failed to build the dictionory.\n' + String(err);
 
       next();
    });
@@ -639,7 +639,7 @@ module.exports.correct = function(req, res, next) {
          errors: errors
       });
 
-      req.err = 'BookController.js, Line: 637\nSome validation errors occurred.\n' + JSON.stringify(errors);
+      req.err = 'BookController.js, Line: 642\nSome validation errors occurred.\n' + JSON.stringify(errors);
 
       next();
 
@@ -649,8 +649,21 @@ module.exports.correct = function(req, res, next) {
    var id = req.params.id;
 
    Book.find({ where: { id: id, user_id: req.user.id } }).then(function(book) {
-      var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/lm.json';
-      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name + '/' + req.user.id + '/' + book.id + '/lm.json';
+      if(!book) {
+         res.status(404).json({
+            status: 'failed',
+            message: 'The requested route was not found.'
+         });
+
+         req.err = 'BookController.js, Line: 658\nThe specified Book was not found in the database.\n';
+
+         next();
+
+         return;
+      }
+
+      var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
+      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.json';
 
       var trie;
       if(fs.existsSync(userTrie)){
@@ -695,7 +708,7 @@ module.exports.correct = function(req, res, next) {
                }
 
                for (var j = word.length - 1; j >= 0; j--) {
-                  if(Regex.letter.test(word.charAt(j))) {
+                  if(!Regex.punctuation.test(word.charAt(j))) {
                      aft = word.substring(j + 1);
                      word = word.substring(0, j + 1);
                      break;
@@ -704,6 +717,7 @@ module.exports.correct = function(req, res, next) {
             }
 
             if(word.length <= 1) valid = false;
+            if(!word.includes("~")) valid = false; // temp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
             var best = '';
             if(valid) {
                var edit = Math.min(Math.floor((word.length / 5)), 4);
@@ -761,7 +775,197 @@ module.exports.correct = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 584\nfailed to find the book in the database or failed to spell check.\n' + String(err);
+      req.err = 'BookController.js, Line: 778\nfailed to find the book in the database or failed to spell check.\n' + String(err);
+
+      next();
+   });
+};
+
+/**
+* This function gives evaluates on how to correct a wrd ot text.
+* @param  {HTTP}   req  The request object
+* @param  {HTTP}   res  The response object
+* @param  {Function} next Callback function that is called once done with handling the request
+*/
+module.exports.evaluate = function(req, res, next) {
+   /* Validate and sanitizing ID Input */
+   req.checkParams   ('id','required').notEmpty();
+   req.sanitizeParams('id').escape();
+   req.sanitizeParams('id').trim();
+   req.checkParams   ('id','validity').isInt();
+   req.sanitizeParams('id').toInt();
+
+   var errors = req.validationErrors();
+   errors = format(errors);
+   if (errors) {
+      /* input validation failed */
+      res.status(400).json({
+         status: 'failed',
+         errors: errors
+      });
+
+      req.err = 'BookController.js, Line: 807\nSome validation errors occurred.\n' + JSON.stringify(errors);
+
+      next();
+
+      return;
+   }
+
+   var id = req.params.id;
+
+   Book.find({ where: { id: id, user_id: req.user.id, gt_exists: true } }).then(function(book) {
+      if(!book) {
+         res.status(404).json({
+            status: 'failed',
+            message: 'The requested route was not found.'
+         });
+
+         req.err = 'BookController.js, Line: 823\nThe specified Book was not found in the database.\n';
+
+         next();
+
+         return;
+      }
+
+      book.getPages({ where: { number: { $or: { $gt: book.end_set, $lt: book.start_set } } } }).then(function (pages) {
+         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
+         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.json';
+
+         var trie;
+         if(fs.existsSync(userTrie)){
+            trie = new Trie(require('../../' + userTrie));
+         }
+         else if(fs.existsSync(defaultTrie)){
+            trie = new Trie(require('../../' + defaultTrie));
+         }
+         else {
+            trie = new Trie();
+         }
+
+         var Regex = require('../Regex');
+         var totalWords = 0, totalCharacters = 0, werBefore = 0, editDistanceBefore = 0, werAfter = 0,
+         editDistanceAfter = 0;
+
+         for (var i = 0; i < pages.length; i++) {
+
+            werBefore += getWER(pages[i].text_gt, pages[i].text_ocr);
+            editDistanceBefore += getEditDistance(pages[i].text_gt, pages[i].text_ocr);
+
+            /* page correction */
+            var lines = pages[i].text_ocr.split(/\n+/);
+            var text_cor = '';
+
+            for(var j = 0; j < lines.length; j++) {
+               var line = lines[j];
+               var words = line.split(/\s+/);
+
+               for(var k = 0; k < words.length; k++) {
+                  var valid = true;
+                  var bef = "";
+                  var word = words[k];
+                  var aft = "";
+
+                  totalCharacters += word.length;
+
+                  if(Regex.numberWithPuncs.test(word)) {
+                     valid = false;
+                  }
+                  else if(word.length > 1) {
+                     for (var l = 0; l < word.length; l++) {
+                        if(Regex.punctuation.test(word.charAt(l))) {
+                           bef += word.charAt(l);
+                        }
+                        else{
+                           word = word.substring(l);
+                           break;
+                        }
+                     }
+
+                     for (var l = word.length - 1; l >= 0; l--) {
+                        if(!Regex.punctuation.test(word.charAt(l))) {
+                           aft = word.substring(l + 1);
+                           word = word.substring(0, l + 1);
+                           break;
+                        }
+                     }
+                  }
+
+                  if(word.length <= 1) valid = false;
+                  if(!word.includes("~")) valid = false; // temp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+                  var best = '';
+                  if(valid) {
+                     var edit = Math.min(Math.floor((word.length / 5)), 4);
+                     edit = Math.max(1, edit);
+                     var result = trie.suggestions(word, edit);
+
+                     var max = 0;
+                     for (var w in result) {
+                        if(result[w] > max) {
+                           max = result[w];
+                           best = w;
+                        }
+                     }
+                  }
+
+                  if(best) {
+                     text_cor += bef + best + aft;
+                  }
+                  else{
+                     text_cor += bef + word + aft;
+                  }
+
+                  text_cor += ' ';
+               }
+
+               text_cor += '\n';
+
+               totalWords += words.length;
+            }
+            /* end of page correction */
+
+            werAfter += getWER(pages[i].text_gt, text_cor);
+            editDistanceAfter += getEditDistance(pages[i].text_gt, text_cor);
+         }
+
+         console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
+         if(pages.length !== 0) {
+            werBefore = (1.0*werBefore) / totalWords;
+            werAfter = (1.0*werAfter) / totalWords;
+            editDistanceBefore = (1.0*editDistanceBefore) / totalCharacters;
+            editDistanceAfter = (1.0*editDistanceAfter) / totalCharacters;
+         }
+         console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
+
+         res.status(200).json({
+            status: 'succeeded',
+            evaluation: {
+               werBefore: werBefore,
+               werAfter: werAfter,
+               editDistanceBefore: editDistanceBefore,
+               editDistanceAfter: editDistanceAfter
+            }
+         });
+
+         next();
+      }).catch(function(err){
+         /* failed to find the pages in the database or failed to spell check */
+         res.status(500).json({
+            status:'failed',
+            message: 'Internal server error'
+         });
+
+         req.err = 'BookController.js, Line: 957\nfailed to find the pages in the database or failed to spell check.\n' + String(err);
+
+         next();
+      });
+   }).catch(function(err){
+      /* failed to find the book in the database */
+      res.status(500).json({
+         status:'failed',
+         message: 'Internal server error'
+      });
+
+      req.err = 'BookController.js, Line: 968\nfailed to find the book in the database.\n' + String(err);
 
       next();
    });
@@ -796,3 +1000,67 @@ function naturalCompare(a, b) {
    }
    return ax.length - bx.length;
 }
+
+function getWER(rPage, hPage){
+   var r = rPage.split(/[\s\n]+/), h = hPage.split(/[\s\n]+/);
+   var d = zeros(r.length + 1, h.length + 1);
+
+   for(var i = 0; i < r.length + 1; ++i){
+      d[i][0] = i;
+   }
+
+   for(var i = 0; i < h.length + 1; ++i){
+      d[0][i] = i;
+   }
+
+   for(var i = 1; i < r.length + 1; ++i){
+      for(var j = 1; j < h.length + 1; ++j){
+         if(r[i-1] === h[j-1]){
+            d[i][j] = d[i-1][j-1];
+         }
+         else {
+            var substitution = d[i-1][j-1] + 1;
+            var insertion    = d[i][j-1] + 1;
+            var deletion     = d[i-1][j] + 1;
+            d[i][j] = Math.min(substitution, insertion, deletion);
+         }
+      }
+   }
+   return d[r.length][h.length];
+}
+
+function zeros(rows, cols) {
+   var array = [], row = [];
+   while (cols--) row.push(0);
+   while (rows--) array.push(row.slice());
+   return array;
+}
+
+function getEditDistance(a, b) {
+   if (a.length === 0) return b.length;
+   if (b.length === 0) return a.length;
+
+   var matrix = [];
+   var i;
+   for (i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+   }
+   var j;
+   for (j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+   }
+   var n = a.length,
+   m = b.length;
+   for (i = 1; i <= m; i++) {
+      for (j = 1; j <= n; j++) {
+         if (b.charAt(i - 1) == a.charAt(j - 1)) {
+            matrix[i][j] = matrix[i - 1][j - 1];
+         } else {
+            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1,
+               Math.min(matrix[i][j - 1] + 1,
+                  matrix[i - 1][j] + 1));
+               }
+            }
+         }
+         return matrix[m][n];
+      }

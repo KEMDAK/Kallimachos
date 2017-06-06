@@ -47,6 +47,13 @@ module.exports = function(app) {
     **************/
     require('./resources/BookResource')(app);
 
+    /******************
+    *                 *
+    * Language routes *
+    *                 *
+    ******************/
+    require('./resources/LanguageResource')(app);
+
     /*====================================================================================================================================*/
 
     /* any other request will be treated as not found (404) */

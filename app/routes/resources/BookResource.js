@@ -201,9 +201,7 @@ module.exports = function(app) {
    *        werBefore: word error rate before training (Integer),
    *        werAfter: word error rate after training (Integer),
    *        editDistanceBefore: edit distance between the ocr_output and the ground truth before training (Integer),
-   *        editDistanceAfter: edit distance between the ocr_output and the ground truth after training (Integer),
-   *        ocrErrorBefore: character error rate before training (Integer),
-   *        ocrErrorAfter: character error rate after training (Integer)
+   *        editDistanceAfter: edit distance between the ocr_output and the ground truth after training (Integer)
    *     }
    *     errors:
    *     [
@@ -215,7 +213,7 @@ module.exports = function(app) {
    *     ]
    * }
    */
-   // app.get('/api/book/:id/evaluate', auth, BookController.evaluate);
+   app.get('/api/book/:id/evaluate', auth, BookController.evaluate);
 
    /**
    * A POST route to get the suggestions to correct a given text based on the taining

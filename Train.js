@@ -21,7 +21,21 @@ _.each(fileNames, function(file) {
    var page = fs.readFileSync(dir + file, {
       encoding: 'utf8'
    }).toString();
-   trie.addText(page);
+   if(file.split('.')[1] === 'csv') {
+      /* csv file with frequencies */
+      var lines = page.split(/\n+/);
+      for(var i = 0; i < lines.length; i++) {
+         var line = lines[i].split(',');
+         var words = line[0].split(/\s+/);
+         for(var j = 0; j < words.length; j++) {
+            trie.addWord(words[j], parseInt(line[1]));
+         }
+      }
+   }
+   else {
+      /* text file */
+      trie.addText(page);
+   }
 });
 
 var defaultTrie = 'config/data/Models/' + language + '/';

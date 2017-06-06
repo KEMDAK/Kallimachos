@@ -45,6 +45,21 @@ module.exports.defineBook = function(sequelize) {
    },
    {
       underscored: true,
-      underscoredALL: true
+      underscoredALL: true,
+      instanceMethods:
+      /** @lends User.prototype */
+      {
+         /**
+         * This function returns the book training status.
+         * @return {Boolean} true if the book has a trained language model.
+         */
+         trainingStatus: function() {
+            var languages = require('../../config/data/Languages.json');
+            var fs        = require('fs');
+
+            var userTrie = 'config/data/Models/' + languages[this.language_id - 1].name.toLowerCase() + '/' + this.user_id + '/' + this.id + '/lm.json';
+            return fs.existsSync(userTrie);
+         }
+      }
    });
 };

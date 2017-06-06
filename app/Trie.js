@@ -28,23 +28,24 @@ class Trie {
       };
    }
 
-   addWord (word) {
+   addWord (word, frequency) {
+      frequency = frequency || 1;
 		word.toLowerCase();
 
       for (var i = 0; i < word.length; i++) {
          this.alphabet.add(word.charAt(i));
       }
 
-      this.totalWords++;
+      this.totalWords += frequency;
 
       var helper = function (cur, word, index) {
          if(index === word.length) {
-            cur.words++;
+            cur.words += frequency;
             return;
          }
 
          var c = word.charAt(index);
-         cur.prefixes++;
+         cur.prefixes += frequency;
 
          var nextNode = cur.edges[c];
          if(nextNode === undefined) {
