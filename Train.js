@@ -17,24 +17,26 @@ var fileNames = fs.readdirSync(dir);
 var trie = new Trie();
 
 _.each(fileNames, function(file) {
-   console.log('processing', dir + file);
-   var page = fs.readFileSync(dir + file, {
-      encoding: 'utf8'
-   }).toString();
-   if(file.split('.')[1] === 'csv') {
-      /* csv file with frequencies */
-      var lines = page.split(/\n+/);
-      for(var i = 0; i < lines.length; i++) {
-         var line = lines[i].split(',');
-         var words = line[0].split(/\s+/);
-         for(var j = 0; j < words.length; j++) {
-            trie.addWord(words[j], parseInt(line[1]));
+   if(fs.lstatSync(dir + file).isFile()) {
+      console.log('processing', dir + file);
+      var page = fs.readFileSync(dir + file, {
+         encoding: 'utf8'
+      }).toString();
+      if(file.split('.')[1] === 'csv') {
+         /* csv file with frequencies */
+         var lines = page.split(/\n+/);
+         for(var i = 0; i < lines.length; i++) {
+            var line = lines[i].split(',');
+            var words = line[0].split(/\s+/);
+            for(var j = 0; j < words.length; j++) {
+               trie.addWord(words[j], parseInt(line[1]));
+            }
          }
       }
-   }
-   else {
-      /* text file */
-      trie.addText(page);
+      else {
+         /* text file */
+         trie.addText(page);
+      }
    }
 });
 

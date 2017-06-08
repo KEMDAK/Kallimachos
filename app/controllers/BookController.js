@@ -410,7 +410,7 @@ module.exports.updatePage = function(req, res, next) {
          next();
       }
       else {
-         book.Pages[0].text_mc = text;
+         book.Pages[0].text_mc = text; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
 
          book.Pages[0].save().then(function() {
             res.status(200).json({
@@ -717,7 +717,6 @@ module.exports.correct = function(req, res, next) {
             }
 
             if(word.length <= 1) valid = false;
-            if(!word.includes("~")) valid = false; // temp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
             var best = '';
             if(valid) {
                var edit = Math.min(Math.floor((word.length / 5)), 4);
@@ -891,7 +890,6 @@ module.exports.evaluate = function(req, res, next) {
                   }
 
                   if(word.length <= 1) valid = false;
-                  if(!word.includes("~")) valid = false; // temp <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
                   var best = '';
                   if(valid) {
                      var edit = Math.min(Math.floor((word.length / 5)), 4);
