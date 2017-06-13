@@ -99,7 +99,6 @@ class Trie {
             temp -= (word.length - index);
 
             if(temp >= 0) {
-               // console.log(out, temp);
                var score = ((cur.words * 1.0 / trie.totalWords)) * ((temp + 1) * 1.0 / (editDistance + 1));
                var oldScore = res[out];
                if(oldScore === undefined || oldScore < score)
@@ -117,18 +116,19 @@ class Trie {
             if(index < word.length)
             helper(cur, index + 1, remEditDistance - 1, out);
 
+            var capital = (/[A-Z]/.test(c));
             // replace
             trie.alphabet.forEach(function(cn) {
                nextNode = cur.edges[cn];
                if(nextNode && cn != c)
-               helper(nextNode, index + 1, remEditDistance - 1, out + cn);
+               helper(nextNode, index + 1, remEditDistance - 1, out + ((capital)? cn.toUpperCase() : cn));
             });
 
             // insertion
             trie.alphabet.forEach(function(cn) {
                nextNode = cur.edges[cn];
                if(nextNode)
-               helper(nextNode, index, remEditDistance - 1, out + cn);
+               helper(nextNode, index, remEditDistance - 1, out + ((capital)? cn.toUpperCase() : cn));
             });
          }
       };

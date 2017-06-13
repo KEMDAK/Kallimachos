@@ -1,3 +1,5 @@
 + correct the documentation of the /api/book/:id/correct POST
 + capitalize the languages
 + configure the nodemailer package and start sending mails
+
++ 1,29
