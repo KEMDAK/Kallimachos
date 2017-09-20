@@ -2,3 +2,4 @@
 + configure the nodemailer package and start sending mails
 + configure the saving issue of the frontend
 + add to dictionary front end
++ delete the zip file after extracting it in the upload stage
