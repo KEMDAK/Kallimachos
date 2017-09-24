@@ -704,11 +704,14 @@ module.exports.correct = function(req, res, next) {
                var pred_lines = fs.readFileSync(predFile).toString().split(/\n/);
 
                for(var i = 0; i < pred_lines.length - 1; ++i) {
-                  var edits = getEditDistance(src_lines[i], pred_lines[i]);
+                  var src_tokens = src_lines[i].split(/\s+/);
+                  var trg_tokens = align(pred_lines[i], src_lines[i]);
 
-                  if(edits > 0) {
-                     wrong.push(src_lines[i]);
-                     correct[src_lines[i]] = pred_lines[i];
+                  for(var j = 0; j < src_tokens.length; ++j) {
+                     if(getEditDistance(src_tokens[j], trg_tokens[j]) > 0) {
+                        wrong.push(src_tokens[j]);
+                        correct[src_tokens[j]] = trg_tokens[j];
+                     }
                   }
                }
 
@@ -1032,11 +1035,84 @@ function getEditDistance(a, b) {
          if (b.charAt(i - 1) == a.charAt(j - 1)) {
             matrix[i][j] = matrix[i - 1][j - 1];
          } else {
-            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1,
-               Math.min(matrix[i][j - 1] + 1,
-                  matrix[i - 1][j] + 1));
-               }
-            }
+            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
          }
-         return matrix[m][n];
       }
+   }
+   return matrix[m][n];
+}
+
+var align = function (src, trg) {
+   var dp = [];
+
+   var n = src.length;
+   var m = trg.length;
+
+   for (var i = 0; i <= n; i++) {
+      dp[i] = [i];
+   }
+
+   for (var j = 0; j <= m; j++) {
+      dp[0][j] = j;
+   }
+
+   for (var i = 1; i <= n; i++) {
+      for (var j = 1; j <= m; j++) {
+         if (src.charAt(i - 1) == trg.charAt(j - 1)) {
+            dp[i][j] = dp[i - 1][j - 1];
+         } else {
+            dp[i][j] = Math.min(/* substitution */ dp[i - 1][j - 1] + 1, /* insertion */ Math.min(dp[i][j - 1] + 1, /* deletion */ dp[i - 1][j] + 1));
+         }
+      }
+   }
+
+   // for (var i = 0; i <= n; i++) {
+   //    var line = "";
+   //    for (var j = 0; j <= m; j++) {
+   //       line += dp[i][j] + " ";
+   //    }
+   //    console.log(line);
+   // }
+
+   var i = n;
+   var j = m;
+   var last = n;
+   var arr = [];
+   var str = '';
+   while(i != 0 && j != 0) {
+      if(src.charAt(i - 1) == trg.charAt(j - 1)) {
+         if(src.charAt(i - 1) == ' ') {
+            arr.push(src.substring(i, last));
+            last = i - 1;
+         }
+         i--;
+         j--;
+      }
+      else {
+         if(dp[i][j] == dp[i - 1][j - 1] + 1) {
+            /* substitution */
+            if(trg.charAt(j - 1) == ' ') {
+               arr.push(src.substring(i, last));
+               last = i - 1;
+            }
+            i--;
+            j--;
+         }
+         else if(dp[i][j] == dp[i][j - 1] + 1) {
+            /* insertion */
+            if(trg.charAt(j - 1) == ' ') {
+               arr.push(src.substring(i, last));
+               last = i;
+            }
+            j--;
+         }
+         else if(dp[i][j] == dp[i - 1][j] + 1) {
+            /* deletion */
+            i--;
+         }
+      }
+   }
+
+   arr.push(src.substring(0, last));
+   return arr.reverse();
+};
