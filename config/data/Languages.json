@@ -1,14 +1,18 @@
 [
 	{
-		"name" : "English"
+		"name" : "English",
+		"tokenizer" : "en"
 	},
 	{
-		"name" : "Latin"
+		"name" : "Latin",
+		"tokenizer" : "de"
 	},
 	{
-		"name" : "German"
+		"name" : "German",
+		"tokenizer" : "en"
 	},
 	{
-		"name" : "French"
+		"name" : "French",
+		"tokenizer" : "fr"
 	}
 ]

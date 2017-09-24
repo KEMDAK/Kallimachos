@@ -12,8 +12,8 @@ var Book      = require('../models/Book').Book;
 var Page      = require('../models/Page').Page;
 var Corpus    = require('../models/Corpus').Corpus;
 var format    = require('../scripts').errorFormat;
-var Trie      = require('../Trie');
 var languages = require('../../config/data/Languages.json');
+var LanguageModel = require('../utils/LanguageModel');
 
 /**
 * This function gets a list of all books owned by the logged in user currently in the database.
@@ -136,7 +136,7 @@ module.exports.store = function(req, res, next) {
       next();
 
       if(unique){
-         rimraf(dirName, function() {});
+         rimraf.sync(dirName);
       }
 
       return;
@@ -236,9 +236,9 @@ module.exports.store = function(req, res, next) {
       next();
 
       /* delete the unneeded directories */
-      rimraf(ocrDir);
-      rimraf(gtDir);
-      rimraf(extraDir);
+      rimraf.sync(ocrDir);
+      rimraf.sync(gtDir);
+      rimraf.sync(extraDir);
    }).catch(function(err) {
       if (err.message === 'Validation error') {
          /* The book violated database constraints */
@@ -274,7 +274,7 @@ module.exports.store = function(req, res, next) {
 
       next();
 
-      rimraf(dirName);
+      rimraf.sync(dirName);
    });
 };
 
@@ -662,92 +662,70 @@ module.exports.correct = function(req, res, next) {
          return;
       }
 
-      var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
-      var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.json';
+      var defaultModel = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.pt';
+      var userModel = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.pt';
 
-      var trie;
-      if(fs.existsSync(userTrie)){
-         trie = new Trie(require('../../' + userTrie));
+      var lm;
+      if(fs.existsSync(userModel)){
+         lm = new LanguageModel(userModel, languages[book.language_id - 1].tokenizer);
       }
-      else if(fs.existsSync(defaultTrie)){
-         trie = new Trie(require('../../' + defaultTrie));
-      }
-      else {
-         trie = new Trie();
+      else if(fs.existsSync(defaultModel)){
+         lm = new LanguageModel(defaultModel, languages[book.language_id - 1].tokenizer);
       }
 
       var action = req.body.action;
+      var srcDir = './public/uploads/' + req.user.id + '/' + book.title + '/test/';
+      rimraf.sync(srcDir);
+      fs.mkdirSync(srcDir);
 
       if (action == 'get_incorrect_words') {
          var text = req.body['text[]'];
-         var Regex = require('../Regex');
+         var srcFile = srcDir + 'page.src';
 
-         var wrong = [];
-         var correct = {};
+         fs.writeFileSync(srcFile, text, {
+            encoding: 'utf8'
+         });
 
-         var dic = text.split(/[ \n]+/gm);
+         lm.correct(srcFile,/*normalization*/ true, function(err, predFile) {
+            if(err) {
+               /* failed to run OpenNMT-py */
+               res.status(500).json({
+                  status:'failed',
+                  message: 'Internal server error'
+               });
 
-         for (var i = 0; i < dic.length; i++) {
-            var valid = true;
-            var bef = "";
-            var word = dic[i];
-            var aft = "";
-
-            if(Regex.numberWithPuncs.test(word)) {
-               valid = false;
+               req.err = 'BookController.js, Line: 697\nFailed to run OpenNMT-py.\n' + String(err);
             }
-            else if(word.length > 1) {
-               for (var j = 0; j < word.length; j++) {
-                  if(Regex.punctuation.test(word.charAt(j))) {
-                     bef += word.charAt(j);
-                  }
-                  else{
-                     word = word.substring(j);
-                     break;
-                  }
-               }
+            else {
+               var wrong = [];
+               var correct = {};
 
-               for (var j = word.length - 1; j >= 0; j--) {
-                  if(!Regex.punctuation.test(word.charAt(j))) {
-                     aft = word.substring(j + 1);
-                     word = word.substring(0, j + 1);
-                     break;
+               var src_lines = text.split(/\n/);
+               var pred_lines = fs.readFileSync(predFile).toString().split(/\n/);
+
+               for(var i = 0; i < pred_lines.length - 1; ++i) {
+                  var edits = getEditDistance(src_lines[i], pred_lines[i]);
+
+                  if(edits > 0) {
+                     wrong.push(src_lines[i]);
+                     correct[src_lines[i]] = pred_lines[i];
                   }
                }
+
+               res.status(200).json({
+                  correct: [correct],
+                  incorrect: [wrong]
+               });
             }
 
-            if(word.length <= 1) valid = false;
-            var best = '';
-            if(valid) {
-               var edit = Math.min(Math.floor((word.length / 5)), 4);
-               edit = Math.max(1, edit);
-               var result = trie.suggestions(word, edit);
-
-               var max = 0;
-               for (var w in result) {
-                  if(result[w] > max) {
-                     max = result[w];
-                     best = w;
-                  }
-               }
-            }
-
-            if(best) {
-               wrong.push(bef + word + aft);
-               correct[bef + word + aft] = bef + best + aft;
-            }
-         }
-
-         res.status(200).json({
-            correct: [correct],
-            incorrect: [wrong]
+            next();
          });
       }
       else if (action == 'get_suggestions') {
          var word = req.body.word;
          var edit = Math.min(Math.floor((word.length / 5)), 4);
          edit = Math.max(1, edit);
-         var result = trie.suggestions(word, edit);
+         var result = lm.suggestions(word, edit);
 
          var sortable = [];
          for (var w in result) {
@@ -764,9 +742,9 @@ module.exports.correct = function(req, res, next) {
          }
 
          res.status(200).json(finalResult);
-      }
 
-      next();
+         next();
+      }
    }).catch(function(err){
       /* failed to find the book in the database or failed to spell check */
       res.status(500).json({
@@ -774,7 +752,7 @@ module.exports.correct = function(req, res, next) {
          message: 'Internal server error'
       });
 
-      req.err = 'BookController.js, Line: 778\nfailed to find the book in the database or failed to spell check.\n' + String(err);
+      req.err = 'BookController.js, Line: 778\nfailed to find the book in the database.\n' + String(err);
 
       next();
    });

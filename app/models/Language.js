@@ -1,6 +1,7 @@
 /**
 *  @mixin Language
 *  @property {String} name The language's name
+*  @property {String} tokenizer The tokenizer used for training
 */
 
 /**
@@ -16,6 +17,11 @@ module.exports.defineLanguage = function(sequelize) {
          type: Sequelize.STRING,
          allowNull: false,
          unique: true
+      },
+      tokenizer: {
+         type: Sequelize.STRING,
+         allowNull: false,
+         unique: false
       }
    },
    {

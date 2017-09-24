@@ -38,6 +38,14 @@ module.exports.initialize = function(callback) {
             callback(err);
          }
          else{
+            if (force) {
+               var rimraf = require('rimraf');
+               rimraf.sync('./public/uploads/*');
+               rimraf.sync('./config/data/Models/english/*/');
+               rimraf.sync('./config/data/Models/german/*/');
+               rimraf.sync('./config/data/Models/latin/*/');
+            }
+
             callback(null);
          }
       });
