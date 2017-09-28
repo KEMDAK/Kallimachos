@@ -9,7 +9,7 @@ class LanguageModel {
 
    correct (srcFile, normalize, callback) {
       try {
-         if(!this.modelPath || !srcFile) {
+         if(!srcFile) {
             callback('The src file is required.');
             return;
          }
@@ -20,6 +20,16 @@ class LanguageModel {
          var predFileWTok = srcFile + '.pred.wtok';
          var predFileNWTok = srcFile + '.pred.norm.wtok';
          var predFile = srcFile + '.pred';
+
+         if(!this.modelPath) {
+            fs.writeFileSync(predFile, fs.readFileSync(srcFile).toString(), {
+               encoding: 'utf8'
+            });
+
+            callback(null, predFile);
+            return;
+         }
+
          exec('perl app/utils/tokenizer.perl -a -no-escape -l ' + this.tokenizer + ' -q  < ' + srcFile + ' > ' + srcFileWTok, (err, stdout, stderr) => {
             if(err) {
                callback(err);

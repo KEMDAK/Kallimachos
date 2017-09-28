@@ -396,7 +396,8 @@ module.exports.updatePage = function(req, res, next) {
    /* extracting data */
    var id = req.params.id;
    var pageNumber = req.params.page_number;
-   var text = req.body.text;
+   // var text = req.body.text;
+   var text = null;
 
    Book.findById(id, { where: { user_id: req.user.id }, include: [ { model: Page, as:'Pages', where: { number: pageNumber } } ] }).then(function(book) {
       if(!book || !book.Pages) {
@@ -521,42 +522,42 @@ module.exports.train = function(req, res, next) {
          next();
       }
       else {
-         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
-         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/';
-
-         var trie;
-         if(fs.existsSync(defaultTrie)){
-            trie = new Trie(require('../../' + defaultTrie));
-         }
-         else{
-            trie = new Trie();
-         }
-
-         if(use_extra) {
-            for (var i = 0; i < book.Corpuses.length; i++) {
-               trie.addText(book.Corpuses[i].data);
-            }
-         }
-
-         for (var i = 0; i < book.Pages.length; i++) {
-            if(use_gt) {
-               trie.addText(book.Pages[i].text_gt);
-            }
-            else if(book.Pages[i].text_mc) {
-               trie.addText(book.Pages[i].text_mc);
-            }
-            else {
-               trie.addText(book.Pages[i].text_ocr);
-            }
-         }
-
-         if(!fs.existsSync(userTrie)){
-            require('mkdirp').sync(userTrie);
-         }
-
-         fs.writeFileSync(userTrie + 'lm.json', JSON.stringify(trie), {
-            encoding: 'utf8'
-         });
+         // var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
+         // var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/';
+         //
+         // var trie;
+         // if(fs.existsSync(defaultTrie)){
+         //    trie = new Trie(require('../../' + defaultTrie));
+         // }
+         // else{
+         //    trie = new Trie();
+         // }
+         //
+         // if(use_extra) {
+         //    for (var i = 0; i < book.Corpuses.length; i++) {
+         //       trie.addText(book.Corpuses[i].data);
+         //    }
+         // }
+         //
+         // for (var i = 0; i < book.Pages.length; i++) {
+         //    if(use_gt) {
+         //       trie.addText(book.Pages[i].text_gt);
+         //    }
+         //    else if(book.Pages[i].text_mc) {
+         //       trie.addText(book.Pages[i].text_mc);
+         //    }
+         //    else {
+         //       trie.addText(book.Pages[i].text_ocr);
+         //    }
+         // }
+         //
+         // if(!fs.existsSync(userTrie)){
+         //    require('mkdirp').sync(userTrie);
+         // }
+         //
+         // fs.writeFileSync(userTrie + 'lm.json', JSON.stringify(trie), {
+         //    encoding: 'utf8'
+         // });
          book.start_set = start_set;
          book.end_set = end_set;
 
@@ -672,36 +673,39 @@ module.exports.correct = function(req, res, next) {
       else if(fs.existsSync(defaultModel)){
          lm = new LanguageModel(defaultModel, languages[book.language_id - 1].tokenizer);
       }
+      else {
+         lm = new LanguageModel(null, languages[book.language_id - 1].tokenizer);
+      }
 
       var action = req.body.action;
-      var srcDir = './public/uploads/' + req.user.id + '/' + book.title + '/test/';
+      var srcDir = './public/uploads/' + req.user.id + '/' + book.title + '/pred/';
       rimraf.sync(srcDir);
       fs.mkdirSync(srcDir);
 
-      if (action == 'get_incorrect_words') {
-         var text = req.body['text[]'];
-         var srcFile = srcDir + 'page.src';
+      var text = req.body['text[]'] || req.body.word;
+      var srcFile = srcDir + 'page.src';
 
-         fs.writeFileSync(srcFile, text, {
-            encoding: 'utf8'
-         });
+      fs.writeFileSync(srcFile, text, {
+         encoding: 'utf8'
+      });
 
-         lm.correct(srcFile,/*normalization*/ true, function(err, predFile) {
-            if(err) {
-               /* failed to run OpenNMT-py */
-               res.status(500).json({
-                  status:'failed',
-                  message: 'Internal server error'
-               });
+      lm.correct(srcFile,/*normalization*/ true, function(err, predFile) {
+         if(err) {
+            /* failed to run OpenNMT-py */
+            res.status(500).json({
+               status:'failed',
+               message: 'Internal server error'
+            });
 
-               req.err = 'BookController.js, Line: 697\nFailed to run OpenNMT-py.\n' + String(err);
-            }
-            else {
+            req.err = 'BookController.js, Line: 697\nFailed to run OpenNMT-py.\n' + String(err);
+         }
+         else {
+            var src_lines = text.split(/\n/);
+            var pred_lines = fs.readFileSync(predFile).toString().split(/\n/);
+
+            if (action == 'get_incorrect_words') {
                var wrong = [];
                var correct = {};
-
-               var src_lines = text.split(/\n/);
-               var pred_lines = fs.readFileSync(predFile).toString().split(/\n/);
 
                for(var i = 0; i < pred_lines.length - 1; ++i) {
                   var src_tokens = src_lines[i].split(/\s+/);
@@ -720,34 +724,18 @@ module.exports.correct = function(req, res, next) {
                   incorrect: [wrong]
                });
             }
+            else if (action == 'get_suggestions') {
+               var finalResult = [];
 
-            next();
-         });
-      }
-      else if (action == 'get_suggestions') {
-         var word = req.body.word;
-         var edit = Math.min(Math.floor((word.length / 5)), 4);
-         edit = Math.max(1, edit);
-         var result = lm.suggestions(word, edit);
+               finalResult.push(pred_lines[0]);
 
-         var sortable = [];
-         for (var w in result) {
-            sortable.push([w, result[w]]);
+               res.status(200).json(finalResult);
+
+            }
          }
-
-         sortable.sort(function(a, b) {
-            return b[1] - a[1];
-         });
-
-         var finalResult = [];
-         for(var j = 0; j < 5 && j < sortable.length; j++) {
-            finalResult.push(sortable[j][0]);
-         }
-
-         res.status(200).json(finalResult);
 
          next();
-      }
+      });
    }).catch(function(err){
       /* failed to find the book in the database or failed to spell check */
       res.status(500).json({
@@ -808,124 +796,94 @@ module.exports.evaluate = function(req, res, next) {
       }
 
       book.getPages({ where: { number: { $or: { $gt: book.end_set, $lt: book.start_set } } } }).then(function (pages) {
-         var defaultTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.json';
-         var userTrie = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.json';
+         var defaultModel = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/lm.pt';
+         var userModel = 'config/data/Models/' + languages[book.language_id - 1].name.toLowerCase() + '/' + req.user.id + '/' + book.id + '/lm.pt';
 
-         var trie;
-         if(fs.existsSync(userTrie)){
-            trie = new Trie(require('../../' + userTrie));
+         var lm;
+         if(fs.existsSync(userModel)){
+            lm = new LanguageModel(userModel, languages[book.language_id - 1].tokenizer);
          }
-         else if(fs.existsSync(defaultTrie)){
-            trie = new Trie(require('../../' + defaultTrie));
+         else if(fs.existsSync(defaultModel)){
+            lm = new LanguageModel(defaultModel, languages[book.language_id - 1].tokenizer);
          }
          else {
-            trie = new Trie();
+            lm = new LanguageModel(null, languages[book.language_id - 1].tokenizer);
          }
 
-         var Regex = require('../Regex');
+         var srcDir = './public/uploads/' + req.user.id + '/' + book.title + '/pred/';
+
          var totalWords = 0, totalCharacters = 0, werBefore = 0, editDistanceBefore = 0, werAfter = 0,
          editDistanceAfter = 0;
 
-         for (var i = 0; i < pages.length; i++) {
+         var rec = function(i, callback) {
+
+            if(i >= pages.length) {
+               callback();
+               return;
+            }
 
             werBefore += getWER(pages[i].text_gt, pages[i].text_ocr);
             editDistanceBefore += getEditDistance(pages[i].text_gt, pages[i].text_ocr);
 
             /* page correction */
-            var lines = pages[i].text_ocr.split(/\n+/);
-            var text_cor = '';
+            rimraf.sync(srcDir);
+            fs.mkdirSync(srcDir);
 
-            for(var j = 0; j < lines.length; j++) {
-               var line = lines[j];
-               var words = line.split(/\s+/);
+            var text = pages[i].text_ocr;
+            var srcFile = srcDir + 'page.src';
 
-               for(var k = 0; k < words.length; k++) {
-                  var valid = true;
-                  var bef = "";
-                  var word = words[k];
-                  var aft = "";
+            fs.writeFileSync(srcFile, text, {
+               encoding: 'utf8'
+            });
 
-                  totalCharacters += word.length;
+            lm.correct(srcFile,/*normalization*/ true, function(err, predFile) {
+               if(err) {
+                  /* failed to run OpenNMT-py */
+                  res.status(500).json({
+                     status:'failed',
+                     message: 'Internal server error'
+                  });
 
-                  if(Regex.numberWithPuncs.test(word)) {
-                     valid = false;
-                  }
-                  else if(word.length > 1) {
-                     for (var l = 0; l < word.length; l++) {
-                        if(Regex.punctuation.test(word.charAt(l))) {
-                           bef += word.charAt(l);
-                        }
-                        else{
-                           word = word.substring(l);
-                           break;
-                        }
-                     }
-
-                     for (var l = word.length - 1; l >= 0; l--) {
-                        if(!Regex.punctuation.test(word.charAt(l))) {
-                           aft = word.substring(l + 1);
-                           word = word.substring(0, l + 1);
-                           break;
-                        }
-                     }
-                  }
-
-                  if(word.length <= 1) valid = false;
-                  var best = '';
-                  if(valid) {
-                     var edit = Math.min(Math.floor((word.length / 5)), 4);
-                     edit = Math.max(1, edit);
-                     var result = trie.suggestions(word, edit);
-
-                     var max = 0;
-                     for (var w in result) {
-                        if(result[w] > max) {
-                           max = result[w];
-                           best = w;
-                        }
-                     }
-                  }
-
-                  if(best) {
-                     text_cor += bef + best + aft;
-                  }
-                  else{
-                     text_cor += bef + word + aft;
-                  }
-
-                  text_cor += ' ';
+                  req.err = 'BookController.js, Line: 697\nFailed to run OpenNMT-py.\n' + String(err);
                }
+               else {
+                  var text_cor = fs.readFileSync(predFile).toString();
 
-               text_cor += '\n';
+                  werAfter += getWER(pages[i].text_gt, text_cor);
+                  editDistanceAfter += getEditDistance(pages[i].text_gt, text_cor);
+                  totalWords += pages[i].text_gt.split(/[\s\n]+/).length;
+                  totalCharacters += pages[i].text_gt.length;
 
-               totalWords += words.length;
-            }
+                  rec(i + 1, callback);
+               }
+            });
             /* end of page correction */
+         };
 
-            werAfter += getWER(pages[i].text_gt, text_cor);
-            editDistanceAfter += getEditDistance(pages[i].text_gt, text_cor);
-         }
-
-         console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
-         if(pages.length !== 0) {
-            werBefore = (1.0*werBefore) / totalWords;
-            werAfter = (1.0*werAfter) / totalWords;
-            editDistanceBefore = (1.0*editDistanceBefore) / totalCharacters;
-            editDistanceAfter = (1.0*editDistanceAfter) / totalCharacters;
-         }
-         console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
-
-         res.status(200).json({
-            status: 'succeeded',
-            evaluation: {
-               werBefore: werBefore,
-               werAfter: werAfter,
-               editDistanceBefore: editDistanceBefore,
-               editDistanceAfter: editDistanceAfter
+         var rest = function() {
+            console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
+            if(pages.length !== 0) {
+               werBefore = ((1.0*werBefore) / totalWords) * 100;
+               werAfter = ((1.0*werAfter) / totalWords) * 100;
+               editDistanceBefore = ((1.0*editDistanceBefore) / totalCharacters) * 100;
+               editDistanceAfter = ((1.0*editDistanceAfter) / totalCharacters) * 100;
             }
-         });
+            console.log(werBefore, werAfter, editDistanceBefore, editDistanceAfter, pages.length, totalWords, totalCharacters);
 
-         next();
+            res.status(200).json({
+               status: 'succeeded',
+               evaluation: {
+                  werBefore: werBefore,
+                  werAfter: werAfter,
+                  editDistanceBefore: editDistanceBefore,
+                  editDistanceAfter: editDistanceAfter
+               }
+            });
+
+            next();
+         };
+
+         rec(0, rest);
       }).catch(function(err){
          /* failed to find the pages in the database or failed to spell check */
          res.status(500).json({
