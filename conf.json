@@ -1,0 +1,18 @@
+{
+    "templates": {
+        "systemName"            : "Kallimachos",
+        "footer"                : "",
+        "copyright"             : "",
+        "includeDate"           : false,
+        "navType"               : "inline",
+        "theme"                 : "flatly",
+        "linenums"              : true,
+        "collapseSymbols"       : false,
+        "inverseNav"            : true,
+        "outputSourceFiles"     : false,
+        "outputSourcePath"      : false,
+        "dateFormat"            : "DD MM YYYY",
+        "syntaxTheme"           : "default",
+        "sort"                  : true
+    }
+}
