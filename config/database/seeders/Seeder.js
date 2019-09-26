@@ -1,4 +1,5 @@
-var AdminSeeder = require('./AdminSeeder');
+var AdminSeeder    = require('./AdminSeeder');
+var LanguageSeeder = require('./LanguageSeeder');
 
 /**
 * This function seeds the predefined values into the database
@@ -11,7 +12,14 @@ module.exports = function(callback){
             callback(err);
         }
         else{
-            callback();
+           LanguageSeeder(function(err) {
+               if(err){
+                   callback(err);
+               }
+               else{
+                   callback();
+               }
+           });
         }
     });
 };

@@ -4,7 +4,6 @@
  *  @property {Date} token_exp_date IThe expiry Date of the access token
  *  @property {Enum} user_agent The user agent of the identity
  *  @property {Date} last_logged_in Records the time of the most recent login using this identity
- *
  */
 
 /**

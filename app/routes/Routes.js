@@ -11,13 +11,13 @@ module.exports = function(app) {
 
     /* allowing cross origin requests */
     app.use(function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', "http://localhost:*");
+        res.header('Access-Control-Allow-Origin', "http://localhost:9000");
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
         res.header('Access-Control-Allow-Headers', 'Content-Type, User_Agent, Authorization');
 
         // intercept OPTIONS method
         if ('OPTIONS' == req.method) {
-            res.send(200);
+            res.sendStatus(200);
         }
 
         next();
@@ -39,6 +39,20 @@ module.exports = function(app) {
     *             *
     **************/
     require('./resources/UserResource')(app);
+
+    /**************
+    *             *
+    * Book routes *
+    *             *
+    **************/
+    require('./resources/BookResource')(app);
+
+    /******************
+    *                 *
+    * Language routes *
+    *                 *
+    ******************/
+    require('./resources/LanguageResource')(app);
 
     /*====================================================================================================================================*/
 

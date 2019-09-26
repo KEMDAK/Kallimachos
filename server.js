@@ -18,7 +18,7 @@ db.initialize(function(err) {
       console.log('Connected successfully to MySQL database: ' + process.env.DB_NAME + '_' + process.env.ENV +  '@' + process.env.DB_HOST);
 
       //* serving static files */
-      app.use(express.static('public/images/'));
+      app.use(express.static('public/uploads/'));
       app.use('/api', express.static('documentation/' + require('./package.json').name + '/' + require('./package.json').version + '/'));
       /* setting up body parser */
       app.use(bodyParser.json());

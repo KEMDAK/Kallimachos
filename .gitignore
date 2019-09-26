@@ -38,3 +38,9 @@ jspm_packages
 
 # Enviroment variables
 .env
+
+# uploaded files
+public/uploads
+
+# generated models
+config/data/Models
