@@ -34,7 +34,7 @@
     "ejs": "^2.5.7",
     "email-templates": "^2.7.1",
     "es5-ext": "^0.10.30",
-    "express": "^4.15.4",
+    "express": "^4.17.3",
     "express-validator": "^3.2.1",
     "jsonwebtoken": "^7.4.3",
     "method-override": "^2.3.9",
